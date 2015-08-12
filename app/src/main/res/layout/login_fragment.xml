@@ -9,7 +9,7 @@
 
 
     <EditText
-        android:id="@+id/passwordLogin"
+        android:id="@+id/passwordTextLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
@@ -21,35 +21,35 @@
         android:layout_alignParentStart="true" />
 
     <Button
-        android:id="@+id/loginLogin"
+        android:id="@+id/loginButtonLogin"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:text="Login"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:layout_below="@+id/passwordLogin"
+        android:layout_below="@+id/passwordTextLogin"
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:id="@+id/registerLogin"
+        android:id="@+id/registerButtonLogin"
         android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:text="Register"
-        android:layout_below="@+id/loginLogin"
-        android:layout_alignEnd="@+id/loginLogin"
-        android:layout_alignStart="@+id/loginLogin" />
+        android:layout_below="@+id/loginButtonLogin"
+        android:layout_alignEnd="@+id/loginButtonLogin"
+        android:layout_alignStart="@+id/loginButtonLogin" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:ems="10"
-        android:id="@+id/emailAddressLogin"
+        android:id="@+id/emailAddressTextLogin"
         android:text="Email Address"
-        android:layout_above="@+id/passwordLogin"
+        android:layout_above="@+id/passwordTextLogin"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/passwordLogin"
-        android:layout_alignEnd="@+id/passwordLogin" />
+        android:layout_alignRight="@+id/passwordTextLogin"
+        android:layout_alignEnd="@+id/passwordTextLogin" />
 
 </RelativeLayout>
