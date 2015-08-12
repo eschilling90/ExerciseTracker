@@ -2,26 +2,12 @@ import Crypto.Random
 from Crypto.Protocol import KDF
 from google.appengine.ext import ndb
 from datetime import datetime
-import json
 
-class User(ndb.Model):
-    userId = ndb.IntegerProperty()
+class Credentials(ndb.Model):
+    userID = ndb.IntegerProperty()
     name = ndb.StringProperty()
     permissionFlag = ndb.IntegerProperty()
     emailAddress = ndb.StringProperty()
-
-
-    def getViewableInfo(self):
-        return {'userId': userId, 'name': name, 'emailAddress': emailAddress}
-
-    @staticmethod
-    def generateId():
-        maxId = 0
-        for user in User.query():
-            if user.userId > maxId:
-                maxId = user.userId
-        return maxId + 1
-
     """Credentials to authenticate a person.
     """
     # --- Class Variables ---
@@ -104,7 +90,7 @@ class User(ndb.Model):
 
     def generate_dk(self, token):
         """Generate a defined key for a given token in hex
-        >>> c = User()
+        >>> c = Credentials()
         >>> c.salt = 'abc'
         >>> c.iterations = 4
         >>> dk = c.generate_dk("password")
@@ -118,7 +104,7 @@ class User(ndb.Model):
     def set_dk(self, token):
         """Set the derived key from the given token, generating iterations
         and salt as necessary.
-        >>> c = User()
+        >>> c = Credentials()
         >>> c.set_dk("password")
         >>> len(c.dk)
         64
@@ -133,7 +119,7 @@ class User(ndb.Model):
         
     def verify(self, token):
         """Determine if the given token matches the saved token
-        >>> c = User()
+        >>> c = Credentials()
         Fail when credentials have no dk
         >>> c.verify("password")
         # my name is my passport, verify me
