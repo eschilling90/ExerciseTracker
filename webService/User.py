@@ -55,7 +55,6 @@ class User(ndb.Model):
     # --- OTHER ---
     # The next couple items are not part of this article, but included
     # as food for thought.
--
     # We keep track of how many times a person has attempted to log in.
     failed_attempts = ndb.IntegerProperty(indexed=False)
 

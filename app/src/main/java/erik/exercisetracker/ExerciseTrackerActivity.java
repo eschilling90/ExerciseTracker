@@ -1,17 +1,30 @@
 package erik.exercisetracker;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity {
+public class ExerciseTrackerActivity extends ActionBarActivity {
+
+    public static String REQUEST_URL = "http://exercise-tracker-web-service.appspot.com/";
+    public static SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        pref = getApplicationContext().getSharedPreferences("Credentials", Context.MODE_PRIVATE);
+        if(pref.contains("emailAddress")) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new AddTraineeFragment()).commit();
+        } else {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.container, new LoginFragment()).commit();
+        }
     }
 
 

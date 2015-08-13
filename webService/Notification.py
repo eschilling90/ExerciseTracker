@@ -12,12 +12,12 @@ class Notification(ndb.Model):
 	read = ndb.BooleanProperty(default=False)
 
 	@staticmethod
-    def generateId():
-        maxId = 0
-        for notification in Notification.query():
-            if notification.notificationId > maxId:
-                maxId = notification.notificationId
-        return maxId + 1
+	def generateId():
+		maxId = 0
+		for notification in Notification.query():
+			if notification.notificationId > maxId:
+				maxId = notification.notificationId
+		return maxId + 1
 
 	def JSONOutputShort(self):
 		sender = User.query(User.userId == self.senderId)
