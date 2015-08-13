@@ -29,8 +29,6 @@ import android.widget.Toast;
 
 public class RegisterFragment extends Fragment {
 
-    private AsyncHttpClient httpClient = new AsyncHttpClient();
-
     public RegisterFragment() {
     }
 
@@ -63,7 +61,7 @@ public class RegisterFragment extends Fragment {
                 if (!emailAddress.isEmpty() && !passwordValue.isEmpty() && !passwordRetypeValue.isEmpty() && (passwordValue.equals(passwordRetypeValue)))
                 {
                     //Connect to webservice to add user and check result
-                    httpClient.post(ExerciseTrackerActivity.REQUEST_URL + "register?firstName=" + firstName + "&lastName=" + lastName + "&emailAddress=" + emailAddress + "&password=" + passwordValue + "&permissions=1", new AsyncHttpResponseHandler() {
+                    ExerciseTrackerActivity.httpClient.post(ExerciseTrackerActivity.REQUEST_URL + "register?firstName=" + firstName + "&lastName=" + lastName + "&emailAddress=" + emailAddress + "&password=" + passwordValue + "&permissions=1", new AsyncHttpResponseHandler() {
                         public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                             try{
                                 JSONObject jsonResponse = new JSONObject(new String(response));

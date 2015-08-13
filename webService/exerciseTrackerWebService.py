@@ -52,7 +52,7 @@ class RegisterHandler(webapp2.RequestHandler):
 		name = firstName + "#" + lastName
 		emailAddress = self.request.get('emailAddress')
 		password = self.request.get('password')
-		permissions = self.request.get('permissions')
+		permissions = int(self.request.get('permissions'))
 		if permissions == '':
 			permissions = 1
 		userId = User.generateId()
@@ -158,22 +158,21 @@ class NotificationHandler(webapp2.RequestHandler):
 	def post(self):
 		statusCode = 200
 		recurrenceRate = self.request.get('recurrenceRate')
-		try:
-			senderId = self.request.get('senderId')
-		except KeyError:
-			senderEmail = self.request.get('senderEmail')
+		senderId = self.request.get('senderId')
+		if senderId == '':
+			senderEmail = self.request.get('senderAddress')
 			sender = User.query(User.emailAddress == senderEmail).get()
 			if sender:
 				senderId = sender.userId
-		try:
-			receiverId = self.request.get('receiverId')
-		except KeyError:
-			receiverEmail = self.request.get('receiverEmail')
+		receiverId = self.request.get('receiverId')
+		if receiverId == '':
+			receiverEmail = self.request.get('receiverAddress')
 			receiver = User.query(User.emailAddress == receiverEmail).get()
 			if receiver:
 				receiverId = receiver.userId
-		notificationId = Notification.generateId()
-		notification = Notification(notificationId=notificationId, contents=contents, recurrenceRate=recurrenceRate, senderId=senderId, receiverId=receiverId)
+		contents = json.dumps(json.loads(self.request.body))
+		notificationId = int(Notification.generateId())
+		notification = Notification(notificationId=notificationId, contents=contents, recurrenceRate=recurrenceRate, senderId=int(senderId), receiverId=int(receiverId))
 		notification.put()
 		self.response.write(json.dumps({'statusCode': statusCode}))
 '''

@@ -37,7 +37,6 @@ import java.util.Date;
  * Created by eriks_000 on 8/12/2015.
  */
 public class AddTraineeFragment extends Fragment {
-    private AsyncHttpClient httpClient = new AsyncHttpClient();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,7 +51,6 @@ public class AddTraineeFragment extends Fragment {
                 final String otherAddress = ((EditText) rootView.findViewById(R.id.emailAddressTextAdd_trainee)).getText().toString();
                 //contents, recurrenceRate, senderId/senderEmail, receiverId/receiverEmail
                 StringEntity params = null;
-                httpClient.setURLEncodingEnabled(true);
                 NotificationContent contents = new NotificationContent();
                 contents.title = "Trainee request";
                 Gson gson = new Gson();
@@ -62,17 +60,17 @@ public class AddTraineeFragment extends Fragment {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                httpClient.post(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "notification?senderAddress=" + emailAddress + "&receiverAddress=" + otherAddress + "&recurrenceRate=0", params, "application/json", new AsyncHttpResponseHandler() {
+                ExerciseTrackerActivity.httpClient.post(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "notification?senderAddress=" + emailAddress + "&receiverAddress=" + otherAddress + "&recurrenceRate=0", params, "application/json", new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int i, Header[] headers, byte[] response) {
                         Log.d("debug", "response is: " + new String(response));
-                        try{
+                        try {
                             JSONObject jsonResponse = new JSONObject(new String(response));
                             int code = jsonResponse.getInt("statusCode");
-                            if(code == 202) {
-                                showToast("Invalid email address",rootView);
-                            } else if(code == 201) {
-                                showToast("Invalid trainee email address",rootView);
+                            if (code == 202) {
+                                showToast("Invalid email address", rootView);
+                            } else if (code == 201) {
+                                showToast("Invalid trainee email address", rootView);
                             } else {
                                 showToast("Submitted notification to user", rootView);
                             }
@@ -90,6 +88,17 @@ public class AddTraineeFragment extends Fragment {
             }
         });
 
+        Button backButton = (Button) rootView.findViewById(R.id.backButtonAdd_trainee);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                AddTraineeFragment frag = new AddTraineeFragment();
+                ft.replace(R.id.container, frag);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
         return rootView;
     }
 

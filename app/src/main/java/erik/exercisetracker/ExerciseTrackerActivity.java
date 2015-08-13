@@ -7,9 +7,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.loopj.android.http.AsyncHttpClient;
+
 
 public class ExerciseTrackerActivity extends ActionBarActivity {
 
+    public static AsyncHttpClient httpClient = new AsyncHttpClient();
     public static String REQUEST_URL = "http://exercise-tracker-web-service.appspot.com/";
     public static SharedPreferences pref;
 
@@ -17,6 +20,12 @@ public class ExerciseTrackerActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        httpClient.setURLEncodingEnabled(true);
+        httpClient.setTimeout(40000);
+        httpClient.setResponseTimeout(40000);
+        httpClient.setConnectTimeout(40000);
+
         pref = getApplicationContext().getSharedPreferences("Credentials", Context.MODE_PRIVATE);
         if(pref.contains("emailAddress")) {
             getSupportFragmentManager().beginTransaction()
