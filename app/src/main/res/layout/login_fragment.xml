@@ -45,11 +45,11 @@
         android:inputType="textEmailAddress"
         android:ems="10"
         android:id="@+id/emailAddressTextLogin"
-        android:text="Email Address"
         android:layout_above="@+id/passwordTextLogin"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/passwordTextLogin"
-        android:layout_alignEnd="@+id/passwordTextLogin" />
+        android:layout_alignEnd="@+id/passwordTextLogin"
+        android:hint="Email Address" />
 
 </RelativeLayout>

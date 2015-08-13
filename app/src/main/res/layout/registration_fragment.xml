@@ -51,26 +51,26 @@
         android:inputType="textEmailAddress"
         android:ems="10"
         android:id="@+id/emailAddressTextRegistration"
-        android:text="Email Address"
         android:layout_above="@+id/passwordTextRegistration"
         android:layout_marginBottom="24dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:hint="Email Address" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Last Name"
         android:ems="10"
         android:id="@+id/lastNameTextRegistration"
         android:layout_above="@+id/emailAddressTextRegistration"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/emailAddressTextRegistration"
-        android:layout_alignEnd="@+id/emailAddressTextRegistration" />
+        android:layout_alignEnd="@+id/emailAddressTextRegistration"
+        android:hint="Last Name" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -86,14 +86,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="First Name"
         android:ems="10"
         android:id="@+id/firstNameTextRegistration"
         android:layout_above="@+id/lastNameTextRegistration"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/emailAddressTextRegistration"
-        android:layout_alignEnd="@+id/emailAddressTextRegistration" />
+        android:layout_alignEnd="@+id/emailAddressTextRegistration"
+        android:hint="First Name" />
 
     <Button
         android:layout_width="wrap_content"
