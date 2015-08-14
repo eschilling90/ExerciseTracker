@@ -44,20 +44,20 @@ public class NotificationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedinstanceState) {
         final View rootView = inflater.inflate(R.layout.notification_fragment, container, false);
 
-        final String email = ExerciseTrackerActivity.pref.getString("emailAddress", "");
-
-        httpClient.get(ExerciseTrackerActivity.REQUEST_URL + "notification?email=" + email, new AsyncHttpResponseHandler() {
+        httpClient.get(ExerciseTrackerActivity.REQUEST_URL + "notification?emailAddress=" + ExerciseTrackerActivity.email, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] response) {
                 Log.d("debug", "response is: " + new String(response));
                 try {
-                    JSONArray jsonArray = new JSONArray(new String(response));
-                    for (int j = 0; j < jsonArray.length(); j++){
-                        String newNotification = jsonArray.getJSONObject(j).getString("title");
-                        String senderName = jsonArray.getJSONObject(j).getString("senderID");
-                        String isoDate = jsonArray.getJSONObject(j).getString("creationDate");
+                    JSONObject jsonObject = new JSONObject(new String(response));
+                    JSONArray notifications = jsonObject.getJSONArray("notifications");
+                    String statusCode = jsonObject.getString("statusCode");
+                    for (int j = 0; j < notifications.length(); j++){
+                        String newNotification = notifications.getJSONObject(j).getString("title");
+                        String senderName = notifications.getJSONObject(j).getString("senderId");
+                        String isoDate = notifications.getJSONObject(j).getString("creationDate");
                         DateFormat df = new SimpleDateFormat("yyy-MM-dd'T'HH:mm:ss");
-                        Boolean read = jsonArray.getJSONObject(j).getBoolean("read");
+                        Boolean read = notifications.getJSONObject(j).getBoolean("read");
                         Date newDate = null;
                         try {
                             newDate = df.parse(isoDate);
@@ -68,7 +68,7 @@ public class NotificationFragment extends Fragment {
                         addNotificationToList(newNotification, formatDate.format(newDate), senderName, read, rootView);
                     }
                 } catch (JSONException e) {
-                    setNotificationListErrorMessage("Error loading Notifications", rootView);
+                    setNotificationListErrorMessage("Error loading Notifications (catch)", rootView);
                 }
             }
 
@@ -78,6 +78,17 @@ public class NotificationFragment extends Fragment {
             }
         });
 
+        Button backButton  = (Button) rootView.findViewById(R.id.backButtonNotification);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                AddTraineeFragment frag = new AddTraineeFragment();
+                ft.replace(R.id.container, frag);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
 
         return rootView;
     }

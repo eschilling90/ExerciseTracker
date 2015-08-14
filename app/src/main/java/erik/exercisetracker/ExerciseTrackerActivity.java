@@ -15,6 +15,7 @@ public class ExerciseTrackerActivity extends ActionBarActivity {
     public static AsyncHttpClient httpClient = new AsyncHttpClient();
     public static String REQUEST_URL = "http://exercise-tracker-web-service.appspot.com/";
     public static SharedPreferences pref;
+    public static String email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +29,9 @@ public class ExerciseTrackerActivity extends ActionBarActivity {
 
         pref = getApplicationContext().getSharedPreferences("Credentials", Context.MODE_PRIVATE);
         if(pref.contains("emailAddress")) {
+            email = pref.getString("emailAddress", "");
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new AddTraineeFragment()).commit();
+                    .add(R.id.container, new NotificationFragment()).commit();
         } else {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new LoginFragment()).commit();
