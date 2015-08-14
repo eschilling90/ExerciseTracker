@@ -125,13 +125,13 @@ class NotificationHandler(webapp2.RequestHandler):
 	def get(self):
 		email = str(self.request.get('emailAddress'))
 		user = User.query(User.emailAddress == email).get()
-		try:
-			notificationId = self.request.get('notificationId')
-			getDetail(notificationId)
-		except KeyError:
-			getShort(email, user)
+		notificationId = self.request.get('notificationId')
+		if notificationId == '':
+			self.getShort(email, user)
+		else:
+			self.getDetail(notificationId)
 
-	def getShort(email, user):
+	def getShort(self, email, user):
 		#statusCodes:
 		#200 ok
 		#201 other error
@@ -141,9 +141,9 @@ class NotificationHandler(webapp2.RequestHandler):
 			statusCode = 200
 			for notification in Notification.query(Notification.receiverId == user.userId):
 				notifications.append(notification.JSONOutputShort())
-		self.response.write({'statusCode': statusCode, 'notifications': json.dumps(notifications)})
+		self.response.write(json.dumps({'statusCode': statusCode, 'notifications': notifications}))
 
-	def getDetail(notificationId):
+	def getDetail(self, notificationId):
 		#statusCodes:
 		#200 ok
 		#201 other error
@@ -153,7 +153,7 @@ class NotificationHandler(webapp2.RequestHandler):
 			statusCode = 200
 			notification = Notification.query(Notification.notificationId == notificationId).get()
 			notifications.append(notification.JSONOutputDetail())
-		self.response.write({'statusCode': statusCode, 'notifications': json.dumps(notifications)})
+		self.response.write({'statusCode': statusCode, 'notifications': notifications})
 
 	def post(self):
 		statusCode = 200
@@ -174,7 +174,7 @@ class NotificationHandler(webapp2.RequestHandler):
 		notificationId = int(Notification.generateId())
 		notification = Notification(notificationId=notificationId, contents=contents, recurrenceRate=recurrenceRate, senderId=int(senderId), receiverId=int(receiverId))
 		notification.put()
-		self.response.write(json.dumps({'statusCode': statusCode}))
+		self.response.write({'statusCode': statusCode})
 '''
 class WeightHandler(webapp2.RequestHandler):
 	def get(self):

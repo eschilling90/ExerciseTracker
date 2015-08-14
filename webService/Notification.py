@@ -9,7 +9,7 @@ class Notification(ndb.Model):
 	recurrenceRate = ndb.StringProperty()
 	senderId = ndb.IntegerProperty()
 	receiverId = ndb.IntegerProperty()
-	read = ndb.BooleanProperty(default=False)
+	isRead = ndb.BooleanProperty(default=False)
 
 	@staticmethod
 	def generateId():
@@ -20,21 +20,21 @@ class Notification(ndb.Model):
 		return maxId + 1
 
 	def JSONOutputShort(self):
-		sender = User.query(User.userId == self.senderId)
-		content = json.load(self.contents)
-		return json.dumps({'notificationId': self.notificationId,
+		sender = User.query(User.userId == self.senderId).get()
+		content = json.loads(str(self.contents))
+		return {'notificationId': self.notificationId,
 		'title': content["title"],
-		'creationDate': self.creationDate,
+		'creationDate': self.creationDate.isoformat(),
 		'recurrenceRate': self.recurrenceRate,
 		'senderId': sender.name,
-		'read': self.read})
+		'read': self.isRead}
 
 	def JSONOutputDetail(self):
-		sender = User.query(User.userId == self.senderId)
-		content = json.load(self.contents)
-		return json.dumps({'notificationId': self.notificationId,
+		sender = User.query(User.userId == self.senderId).get()
+		content = json.loads(self.contents)
+		return {'notificationId': self.notificationId,
 		'contents': contents,
-		'creationDate': self.creationDate,
+		'creationDate': self.creationDate.isoformat(),
 		'recurrenceRate': self.recurrenceRate,
 		'senderId': sender.name,
-		'read': self.read})
+		'read': self.isRead}
