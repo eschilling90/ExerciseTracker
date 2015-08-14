@@ -86,7 +86,7 @@ class TrainerHandler(webapp2.RequestHandler):
 					if trainer:
 						trainers.append(trainer.getViewableInfo())
 						statusCode = 200
-						self.response.write({'statusCode': statusCode, 'trainers': json.dumps(trainers)})
+						self.response.write(json.dumps({'statusCode': statusCode, 'trainers': trainers}))
 			else:
 				trainees = []
 				for traineeId in Trains.query(Trains.trainerId == user.userId):
@@ -94,7 +94,7 @@ class TrainerHandler(webapp2.RequestHandler):
 					if trainee:
 						trainee.append(trainee.getViewableInfo())
 						statusCode = 200
-						self.response.write({'statusCode': statusCode, 'trainees': json.dumps(trainees)})
+						self.response.write(json.dumps({'statusCode': statusCode, 'trainees': trainees}))
 
 	def post(self):
 		#statusCodes:
@@ -119,7 +119,7 @@ class TrainerHandler(webapp2.RequestHandler):
 					train = Trains(user.userId, other.userId)
 					train.put()
 				statusCode = 200
-		self.response.write({'statusCode': statusCode})
+		self.response.write(json.dumps({'statusCode': statusCode}))
 
 class NotificationHandler(webapp2.RequestHandler):
 	def get(self):
@@ -153,7 +153,7 @@ class NotificationHandler(webapp2.RequestHandler):
 			statusCode = 200
 			notification = Notification.query(Notification.notificationId == notificationId).get()
 			notifications.append(notification.JSONOutputDetail())
-		self.response.write({'statusCode': statusCode, 'notifications': notifications})
+		self.response.write(json.dumpgs({'statusCode': statusCode, 'notifications': notifications}))
 
 	def post(self):
 		statusCode = 200
@@ -174,7 +174,30 @@ class NotificationHandler(webapp2.RequestHandler):
 		notificationId = int(Notification.generateId())
 		notification = Notification(notificationId=notificationId, contents=contents, recurrenceRate=recurrenceRate, senderId=int(senderId), receiverId=int(receiverId))
 		notification.put()
-		self.response.write({'statusCode': statusCode})
+		self.response.write(json.dumps({'statusCode': statusCode}))
+
+class ExerciseHandler(webapp2.RequestHandler):
+	def get(self):
+		statusCode = 200
+		exercises = []
+		for exercise in Exercise.query():
+			exercises.append(exercise.JSONOutput())
+		self.response.write(json.dumps({'statusCode': statusCode, 'exercises': exercises}))
+
+	def post(self):
+		statusCode = 200
+		emailAddress = self.request.get('emailAddress')
+		exerciseContents = json.dumps(json.loads(self.request.body))
+		exerciseId = Exercise.generateId()
+		name = exerciseContents['name']
+		notes = exerciseContents['notes']
+		multimedia = exerciseContents['multimedia']
+		description = exerciseContents['description']
+		tags = exerciseContents['tags']
+		user = User.query(User.emailAddress==emailAddress).get()
+		exercise = Exercise(exerciseId=exerciseId, name=name, notes=notes, multimedia=multimedia, description=description, tags=tags, createdBy=user.userId)
+		exercise.put()
+		self.response.write(json.dumps({'statusCode': statusCode}))
 '''
 class WeightHandler(webapp2.RequestHandler):
 	def get(self):
@@ -212,5 +235,6 @@ application = webapp2.WSGIApplication([
     ('/login', LoginHandler),
     ('/register', RegisterHandler),
 	('/trainer', TrainerHandler),
-	('/notification', NotificationHandler)
+	('/notification', NotificationHandler),
+	('/exercise', ExerciseHandler)
 ], debug=True)

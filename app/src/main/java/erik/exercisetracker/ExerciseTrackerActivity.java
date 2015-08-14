@@ -31,7 +31,7 @@ public class ExerciseTrackerActivity extends ActionBarActivity {
         if(pref.contains("emailAddress")) {
             email = pref.getString("emailAddress", "");
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new NotificationFragment()).commit();
+                    .add(R.id.container, new HomepageFragment()).commit();
         } else {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new LoginFragment()).commit();
