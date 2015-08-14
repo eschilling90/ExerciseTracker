@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:id="@+id/backButtonCreate_exercise"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="63dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create"
+        android:id="@+id/createButtonCreate_exercise"
+        android:layout_alignBaseline="@+id/backButtonCreate_exercise"
+        android:layout_alignBottom="@+id/backButtonCreate_exercise"
+        android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/exerciseNameTextCreate_exercise"
+        android:layout_marginTop="31dp"
+        android:hint="Exercise Name"
+        android:layout_below="@+id/addexerciseHeaderCreate_exercise"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/createButtonCreate_exercise" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/exerciseDescriptionTextCreate_exercise"
+        android:hint="Exercise Description"
+        android:layout_below="@+id/multiMediaTextCreate_exercise"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/createButtonCreate_exercise" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/tagsTextCreate_exercise"
+        android:layout_below="@+id/exerciseNameTextCreate_exercise"
+        android:layout_alignParentStart="true"
+        android:hint="Tags"
+        android:layout_alignEnd="@+id/createButtonCreate_exercise" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Create Exercise"
+        android:id="@+id/addexerciseHeaderCreate_exercise"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/exerciseNotesTextCreate_exercise"
+        android:layout_marginTop="46dp"
+        android:hint="Notes on the Exercise"
+        android:layout_below="@+id/exerciseDescriptionTextCreate_exercise"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/createButtonCreate_exercise" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/multiMediaTextCreate_exercise"
+        android:hint="Multimedia Link"
+        android:layout_below="@+id/tagsTextCreate_exercise"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/createButtonCreate_exercise" />
+</RelativeLayout>

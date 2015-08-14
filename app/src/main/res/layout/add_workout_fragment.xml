@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:id="@+id/backButtonAdd_workout"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="63dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:id="@+id/addButtonAdd_workout"
+        android:layout_alignBaseline="@+id/backButtonAdd_workout"
+        android:layout_alignBottom="@+id/backButtonAdd_workout"
+        android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/workoutNameTextAdd_workout"
+        android:hint="Workout Name"
+        android:layout_below="@+id/addWorkoutHeaderAdd_workout"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/addButtonAdd_workout" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/workoutDescriptionTextAdd_workout"
+        android:hint="Workout Description"
+        android:layout_below="@+id/tagsTextAdd_workout"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/addButtonAdd_workout" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/tagsTextAdd_workout"
+        android:layout_below="@+id/workoutNameTextAdd_workout"
+        android:layout_alignParentStart="true"
+        android:hint="Tags"
+        android:layout_alignEnd="@+id/addButtonAdd_workout" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Add Workout"
+        android:id="@+id/addWorkoutHeaderAdd_workout"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+</RelativeLayout>

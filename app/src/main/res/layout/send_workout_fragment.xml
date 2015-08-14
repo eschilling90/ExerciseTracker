@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Send Workout"
+        android:id="@+id/sendWorkoutHeaderSend_workout"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/workoutNameTextSend_workout"
+        android:layout_below="@+id/sendWorkoutHeaderSend_workout"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="41dp"
+        android:hint="Workout Name"
+        android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tagsTextSend_workout"
+        android:layout_below="@+id/workoutNameTextSend_workout"
+        android:layout_alignParentStart="true"
+        android:hint="Tags"
+        android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/workoutDescriptionTextSend_workout"
+        android:layout_below="@+id/tagsTextSend_workout"
+        android:layout_alignParentStart="true"
+        android:hint="Workout Description"
+        android:layout_alignParentEnd="true" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/exerciseScrollViewSend_workout"
+        android:minWidth="400dp"
+        android:minHeight="20dp"
+        android:layout_below="@+id/addExerciseButtonSend_workout"
+        android:layout_alignParentStart="true"
+        android:fillViewport="false">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/tableExercises"></LinearLayout>
+</ScrollView>
+
+
+        />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Exercise"
+        android:id="@+id/addExerciseButtonSend_workout"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:id="@+id/backButtonSend_workout"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:id="@+id/addButtonSend_workout"
+        android:layout_alignBottom="@+id/backButtonSend_workout"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
