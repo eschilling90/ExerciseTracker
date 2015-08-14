@@ -5,4 +5,13 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="notification_text" >
+        <item name="android:textColor" >#0640ab</item>
+        <item name="android:textSize" >17dp</item>
+        <item name="android:textStyle" >bold</item>
+        <item name = "android:typeface">normal</item>
+    </style>
+
+
+
 </resources>
