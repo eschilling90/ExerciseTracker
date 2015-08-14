@@ -33,7 +33,7 @@ class Notification(ndb.Model):
 		sender = User.query(User.userId == self.senderId)
 		content = json.load(self.contents)
 		return json.dumps({'notificationId': self.notificationId,
-		'title': contents,
+		'contents': contents,
 		'creationDate': self.creationDate,
 		'recurrenceRate': self.recurrenceRate,
 		'senderId': sender.name,

@@ -27,8 +27,6 @@ import org.json.JSONObject;
  */
 public class LoginFragment extends Fragment {
 
-    private AsyncHttpClient httpClient = new AsyncHttpClient();
-
     public LoginFragment() {
     }
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,17 +44,10 @@ public class LoginFragment extends Fragment {
                 EditText password = (EditText) rootView.findViewById(R.id.passwordTextLogin);
                 final String passwordValue = password.getText().toString();
 
-                Log.d("debug", Integer.toString(httpClient.getResponseTimeout()));
-                Log.d("debug", Integer.toString(httpClient.getConnectTimeout()));
-                Log.d("debug", Integer.toString(httpClient.getTimeout()));
-                httpClient.setResponseTimeout(40000);
-                httpClient.setConnectTimeout(40000);
-                httpClient.setTimeout(40000);
-
                 //if Email is valid and Password is not empty
                 if(!emailAddress.equals("") && !passwordValue.equals("")) {
                     //Make connection to back end to check if user exists and if password is correct
-                    httpClient.post(ExerciseTrackerActivity.REQUEST_URL + "login?emailAddress=" + emailAddress +"&password="+passwordValue, new AsyncHttpResponseHandler() {
+                    ExerciseTrackerActivity.httpClient.post(ExerciseTrackerActivity.REQUEST_URL + "login?emailAddress=" + emailAddress +"&password="+passwordValue, new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int i, Header[] headers, byte[] response) {
                             try{
