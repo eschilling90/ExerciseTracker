@@ -15,7 +15,7 @@ public class SendWorkoutFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedinstanceState) {
-        final View rootView = inflater.inflate(R.layout.notification_fragment, container, false);
+        final View rootView = inflater.inflate(R.layout.send_workout_fragment, container, false);
 
         Button backButton = (Button) rootView.findViewById(R.id.backButtonSend_workout);
         backButton.setOnClickListener(new View.OnClickListener() {

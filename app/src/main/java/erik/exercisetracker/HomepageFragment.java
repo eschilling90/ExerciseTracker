@@ -15,7 +15,7 @@ public class HomepageFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedinstanceState) {
-        final View rootView = inflater.inflate(R.layout.notification_fragment, container, false);
+        final View rootView = inflater.inflate(R.layout.homepage_fragment, container, false);
 
         Button notifications = (Button) rootView.findViewById(R.id.notificationButtonHomepage);
         notifications.setOnClickListener(new View.OnClickListener() {

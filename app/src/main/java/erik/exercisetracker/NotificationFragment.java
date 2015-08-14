@@ -81,7 +81,7 @@ public class NotificationFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                AddTraineeFragment frag = new AddTraineeFragment();
+                HomepageFragment frag = new HomepageFragment();
                 ft.replace(R.id.container, frag);
                 ft.addToBackStack(null);
                 ft.commit();
