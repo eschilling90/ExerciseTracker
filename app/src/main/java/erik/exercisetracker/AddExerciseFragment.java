@@ -28,6 +28,18 @@ public class AddExerciseFragment extends Fragment {
                 ft.commit();
             }
         });
+
+        Button createButton = (Button) rootView.findViewById(R.id.createExerciseButtonAddExercise);
+        createButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                CreateExerciseFragment frag = new CreateExerciseFragment();
+                ft.replace(R.id.container, frag);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
         return rootView;
     }
 }

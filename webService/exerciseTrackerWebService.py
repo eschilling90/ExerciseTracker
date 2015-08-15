@@ -187,7 +187,8 @@ class ExerciseHandler(webapp2.RequestHandler):
 	def post(self):
 		statusCode = 200
 		emailAddress = self.request.get('emailAddress')
-		exerciseContents = json.dumps(json.loads(self.request.body))
+		logging.info(json.loads(self.request.body))
+		exerciseContents = json.loads(self.request.body)
 		exerciseId = Exercise.generateId()
 		name = exerciseContents['name']
 		notes = exerciseContents['notes']
