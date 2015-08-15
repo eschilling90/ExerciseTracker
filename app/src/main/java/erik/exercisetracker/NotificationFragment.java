@@ -94,6 +94,8 @@ public class NotificationFragment extends Fragment {
 
     private void addNotificationToList(String notification, String date, String sender, Boolean read, View rootView){
 
+        int marginValue = 50;
+
         LinearLayout notificationTable = (LinearLayout) rootView.findViewById(R.id.tableNotification);
         RelativeLayout relative = new RelativeLayout(getActivity());
         RelativeLayout.LayoutParams rp = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
@@ -101,6 +103,7 @@ public class NotificationFragment extends Fragment {
         //rp.setMargins(0, 0, 0, 0);
         relative.setLayoutParams(rp);
 
+        //date init
         TextView dateText = new TextView(getActivity());
         dateText.setText(date);
         dateText.setId(View.generateViewId());
@@ -110,6 +113,7 @@ public class NotificationFragment extends Fragment {
         //dateParams.setMarginEnd(150);
         relative.addView(dateText, dateParams);
 
+        //notification init
         TextView notificationText = new TextView(getActivity());
         notificationText.setText(notification);
         notificationText.setId(View.generateViewId());
@@ -117,16 +121,22 @@ public class NotificationFragment extends Fragment {
         RelativeLayout.LayoutParams notificationParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
         notificationParams.addRule(RelativeLayout.RIGHT_OF, dateText.getId());
         relative.addView(notificationText, notificationParams);
+        notificationParams.setMarginStart(marginValue);
 
+        //sender init
         TextView senderText = new TextView(getActivity());
+        sender = sender.replace('#', ' ');
+        sender = "From " + sender;
         senderText.setText(sender);
         senderText.setId(View.generateViewId());
         senderText.setTextAppearance(getActivity(), R.style.notification_text);
         RelativeLayout.LayoutParams senderParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
         senderParams.addRule(RelativeLayout.BELOW, notificationText.getId());
         senderParams.addRule(RelativeLayout.ALIGN_LEFT, notificationText.getId());
+        senderParams.setMarginStart(marginValue + 20);
         relative.addView(senderText, senderParams);
 
+        //read flag init
         TextView readFlagText = new TextView(getActivity());
         if(read){
             readFlagText.setText("*");

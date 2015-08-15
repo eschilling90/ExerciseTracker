@@ -1,55 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Notifications"
-        android:id="@+id/notificationButtonHomepage"
-        android:height="100dp"
-        android:width="190dp"
-        android:layout_above="@+id/sendWorkoutButtonHomepage"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Trainee"
-        android:id="@+id/addTraineeButtonHomepage"
-        android:height="100dp"
-        android:width="190dp"
-        android:layout_above="@+id/addExerciseButtonHomepage"
-        android:layout_toEndOf="@+id/notificationButtonHomepage" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send Workout"
-        android:id="@+id/sendWorkoutButtonHomepage"
-        android:height="100dp"
-        android:width="190dp"
-        android:layout_below="@+id/addTraineeButtonHomepage"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Exercise"
-        android:id="@+id/addExerciseButtonHomepage"
-        android:width="190dp"
-        android:height="100dp"
-        android:layout_marginBottom="107dp"
-        android:layout_alignParentBottom="true"
-        android:layout_toEndOf="@+id/notificationButtonHomepage" />
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:id="@+id/Homepage"
+    android:gravity="center">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Exercise Tracker"
-        android:id="@+id/textView"
+        android:id="@+id/exerciseTrakcerHeaderHomepage"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnCount="2"
+        android:rowCount="2"
+        android:useDefaultMargins="true"
+        android:id="@+id/buttonGridHomepage"
+        android:orientation="vertical"
+        android:layout_below="@+id/exerciseTrakcerHeaderHomepage"
+        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="240dp">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notifications"
+            android:id="@+id/notificationButtonHomepage"
+            android:height="100dp"
+            android:width="130dp"
+            android:layout_marginLeft="@dimen/abc_action_bar_default_padding_material"
+            android:layout_marginRight="@dimen/abc_action_bar_default_padding_material" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Trainee"
+            android:id="@+id/addTraineeButtonHomepage"
+            android:height="100dp"
+            android:width="130dp"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/abc_action_bar_default_padding_material"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Exercise"
+            android:id="@+id/addExerciseButtonHomepage"
+            android:width="130dp"
+            android:height="100dp"
+            android:layout_margin="@dimen/abc_action_bar_default_padding_material"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send Workout"
+            android:id="@+id/sendWorkoutButtonHomepage"
+            android:height="100dp"
+            android:width="130dp"
+            android:layout_margin="@dimen/abc_action_bar_default_padding_material"/>
+
+    </GridLayout>
 
 </RelativeLayout>
