@@ -52,12 +52,12 @@ public class HomepageFragment extends Fragment {
             }
         });
 
-        Button addExercise = (Button) rootView.findViewById(R.id.addExerciseButtonHomepage);
-        addExercise.setOnClickListener(new View.OnClickListener() {
+        Button createExercise = (Button) rootView.findViewById(R.id.createExerciseButtonHomepage);
+        createExercise.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
-                AddExerciseFragment frag = new AddExerciseFragment();
+                CreateExerciseFragment frag = new CreateExerciseFragment();
                 ft.replace(R.id.container, frag);
                 ft.addToBackStack(null);
                 ft.commit();

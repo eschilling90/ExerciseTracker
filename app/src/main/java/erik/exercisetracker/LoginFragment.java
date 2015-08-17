@@ -54,9 +54,9 @@ public class LoginFragment extends Fragment {
                                 JSONObject jsonResponse = new JSONObject(new String(response));
                                 int code = jsonResponse.getInt("statusCode");
                                 if(code == 202) {
-                                    showToast("Name does not exist!",rootView);
+                                    UtilityFunctions.showToast("Name does not exist!", getActivity(), rootView);
                                 } else if(code == 201) {
-                                    showToast("Wrong Password!",rootView);
+                                    UtilityFunctions.showToast("Wrong Password!", getActivity(), rootView);
                                 } else {
                                     //Save user's information to avoid logging in every time
                                     SharedPreferences.Editor editor = ExerciseTrackerActivity.pref.edit();
@@ -75,11 +75,11 @@ public class LoginFragment extends Fragment {
                         }
                         @Override
                         public void onFailure(int i, Header[] headers, byte[] response, Throwable throwable) {
-                            showToast("Internet Connection not Available!",rootView);
+                            UtilityFunctions.showToast("Internet Connection not Available!", getActivity(), rootView);
                         }
                     });
                 } else {
-                    showToast("Required Fields Missing", rootView);
+                    UtilityFunctions.showToast("Required Fields Missing", getActivity(), rootView);
                 }
             }
         });
@@ -98,21 +98,5 @@ public class LoginFragment extends Fragment {
         });
 
         return rootView;
-    }
-
-    public void showToast(String message, View rootView)
-    {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View layout = inflater.inflate(R.layout.toast_layout,
-                (ViewGroup) rootView.findViewById(R.id.toast_layout_root));
-
-        TextView text = (TextView) layout.findViewById(R.id.text);
-        text.setText(message);
-
-        Toast toast = new Toast(getActivity().getApplicationContext());
-        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 350);
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(layout);
-        toast.show();
     }
 }

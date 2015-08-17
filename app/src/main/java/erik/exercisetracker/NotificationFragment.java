@@ -159,21 +159,5 @@ public class NotificationFragment extends Fragment {
 
         notificationTable.addView(errorMessage, 0);
     }
-
-    public void showToast(String message, View rootView)
-    {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View layout = inflater.inflate(R.layout.toast_layout,
-                (ViewGroup) rootView.findViewById(R.id.toast_layout_root));
-
-        TextView text = (TextView) layout.findViewById(R.id.text);
-        text.setText(message);
-
-        Toast toast = new Toast(getActivity().getApplicationContext());
-        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 350);
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(layout);
-        toast.show();
-    }
 }
 

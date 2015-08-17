@@ -17,6 +17,17 @@ public class SendWorkoutFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedinstanceState) {
         final View rootView = inflater.inflate(R.layout.send_workout_fragment, container, false);
 
+        Button addExercise = (Button) rootView.findViewById(R.id.addExerciseButtonSend_workout);
+        addExercise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                AddExerciseFragment frag = new AddExerciseFragment();
+                ft.replace(R.id.container, frag);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
         Button backButton = (Button) rootView.findViewById(R.id.backButtonSend_workout);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override

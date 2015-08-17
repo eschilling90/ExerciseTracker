@@ -75,7 +75,7 @@ public class RegisterFragment extends Fragment {
                                     ft.addToBackStack(null);
                                     ft.commit();
                                 } else {
-                                    showToast("email address already exists",rootView);
+                                    UtilityFunctions.showToast("email address already exists", getActivity(), rootView);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -83,34 +83,18 @@ public class RegisterFragment extends Fragment {
                         }
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                            showToast("Request Failed",rootView);
+                            UtilityFunctions.showToast("Request Failed", getActivity(), rootView);
                         }
                     });
                 } else if (emailAddress.isEmpty() || passwordValue.isEmpty() || passwordRetypeValue.isEmpty()) {
-                    showToast("Required Fields Missing",rootView);
+                    UtilityFunctions.showToast("Required Fields Missing", getActivity(), rootView);
                 } else if (!passwordValue.equals(passwordRetypeValue)) {
-                    showToast("Passwords don't Match",rootView);
+                    UtilityFunctions.showToast("Passwords don't Match", getActivity(), rootView);
                 } else {
-                    showToast("Unknown Error",rootView);
+                    UtilityFunctions.showToast("Unknown Error", getActivity(), rootView);
                 }
             }
         });
         return rootView;
-    }
-
-    public void showToast(String message, View rootView)
-    {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View layout = inflater.inflate(R.layout.toast_layout,
-                (ViewGroup) rootView.findViewById(R.id.toast_layout_root));
-
-        TextView text = (TextView) layout.findViewById(R.id.text);
-        text.setText(message);
-
-        Toast toast = new Toast(getActivity().getApplicationContext());
-        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 350);
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(layout);
-        toast.show();
     }
 }

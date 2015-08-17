@@ -53,17 +53,21 @@ public class CreateExerciseFragment extends Fragment {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                ExerciseTrackerActivity.httpClient.post(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "exercise?emailAddress=" + emailAddress, params, "application/json", new AsyncHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int i, Header[] headers, byte[] response) {
-                        showToast("Added Exercise", rootView);
-                    }
+                if (!exercise.name.isEmpty()) {
+                    ExerciseTrackerActivity.httpClient.post(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "exercise?emailAddress=" + emailAddress, params, "application/json", new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int i, Header[] headers, byte[] response) {
+                            UtilityFunctions.showToast("Added Exercise", getActivity(), rootView);
+                        }
 
-                    @Override
-                    public void onFailure(int i, Header[] headers, byte[] response, Throwable throwable) {
-                        showToast("Failed request", rootView);
-                    }
-                });
+                        @Override
+                        public void onFailure(int i, Header[] headers, byte[] response, Throwable throwable) {
+                            UtilityFunctions.showToast("Failed request", getActivity(), rootView);
+                        }
+                    });
+                } else {
+                    UtilityFunctions.showToast("Name required", getActivity(), rootView);
+                }
             }
         });
 
@@ -91,16 +95,7 @@ public class CreateExerciseFragment extends Fragment {
                 alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        TextView tags = (TextView) rootView.findViewById(R.id.tagsTextViewCreateExercise);
-                        String tagsContent = tags.getText().toString();
-                        if (!tagsContent.isEmpty()) {
-                            int index = tagsContent.lastIndexOf(",");
-                            if (index != -1) {
-                                tags.setText(tagsContent.substring(0, index));
-                            } else {
-                                tags.setText("");
-                            }
-                        }
+
                     }
                 });
                 alert.show();
@@ -111,7 +106,16 @@ public class CreateExerciseFragment extends Fragment {
         removeTagButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                TextView tags = (TextView) rootView.findViewById(R.id.tagsTextViewCreateExercise);
+                String tagsContent = tags.getText().toString();
+                if (!tagsContent.isEmpty()) {
+                    int index = tagsContent.lastIndexOf(",");
+                    if (index != -1) {
+                        tags.setText(tagsContent.substring(0, index));
+                    } else {
+                        tags.setText("");
+                    }
+                }
             }
         });
 
@@ -127,21 +131,5 @@ public class CreateExerciseFragment extends Fragment {
             }
         });
         return rootView;
-    }
-
-    public void showToast(String message, View rootView)
-    {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View layout = inflater.inflate(R.layout.toast_layout,
-                (ViewGroup) rootView.findViewById(R.id.toast_layout_root));
-
-        TextView text = (TextView) layout.findViewById(R.id.text);
-        text.setText(message);
-
-        Toast toast = new Toast(getActivity().getApplicationContext());
-        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 350);
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.setView(layout);
-        toast.show();
     }
 }

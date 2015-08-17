@@ -28,7 +28,15 @@
         android:minHeight="20dp"
         android:fillViewport="false"
         android:layout_below="@+id/filterSpinnerAdd_exercise"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/addButtonAdd_exercise" >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/tableExercise"/>
+    </ScrollView>
 
     <Spinner
         android:layout_width="wrap_content"
