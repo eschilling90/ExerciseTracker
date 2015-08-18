@@ -47,7 +47,7 @@ public class SendWorkoutFragment extends Fragment{
 
         final Spinner workoutSpinner = (Spinner) rootView.findViewById(R.id.workoutNameSpinnerSendWorkout);
         final List<String> workouts = new ArrayList<>();
-        workouts.add(0, "");
+        workouts.add(0, "Select Workout");
         workouts.add(1, "Create Workout");
         final ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, workouts);
         workoutSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

@@ -24,10 +24,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by eriks_000 on 8/14/2015.
  */
 public class AddExerciseFragment extends Fragment {
+
+    Map<Integer, ExerciseContent> exerciseMap = new HashMap<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedinstanceState) {
@@ -67,6 +72,22 @@ public class AddExerciseFragment extends Fragment {
             }
         });
 
+        Button addButton = (Button) rootView.findViewById(R.id.addButtonAdd_exercise);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.tableExercise);
+                for (int j=0; j<layout.getChildCount(); j++) {
+                    RelativeLayout outer = (RelativeLayout) layout.getChildAt(j);
+                    if (((CheckBox) outer.getChildAt(1)).isChecked()) {
+                        RelativeLayout inner = (RelativeLayout) outer.getChildAt(0);
+                        int id = inner.getId();
+                        CurrentWorkout.addToWorkout(exerciseMap.get(id));
+                    }
+                }
+            }
+        });
+
         Button createButton = (Button) rootView.findViewById(R.id.createExerciseButtonAddExercise);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +111,9 @@ public class AddExerciseFragment extends Fragment {
         LinearLayout exerciseTable = (LinearLayout) rootView.findViewById(R.id.tableExercise);
         RelativeLayout relativeInner = new RelativeLayout(getActivity());
         RelativeLayout.LayoutParams rpI = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.MATCH_PARENT);
-        relativeInner.setId(View.generateViewId());
+        int id = View.generateViewId();
+        exerciseMap.put(id, exercise);
+        relativeInner.setId(id);
         relativeInner.setClickable(true);
         relativeInner.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +166,6 @@ public class AddExerciseFragment extends Fragment {
         checkBoxParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         checkBoxParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         relativeOuter.addView(checkBox, checkBoxParams);
-
 
         exerciseTable.addView(relativeOuter, 0);
     }

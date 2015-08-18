@@ -104,21 +104,16 @@ class TrainerHandler(webapp2.RequestHandler):
 		#202 invalid user address
 		#203 other error
 		statusCode = 203
-		addTrainer = self.request.get('addTrainer')
-		emailAddress = self.request.get('emailAddress')
-		otherAddress = self.request.get('otherAddress')
+		trainerAddress = self.request.get('trainerAddress')
+		traineeAddress = self.request.get('traineeAddress')
 		statusCode = 202
-		user = User.query(User.emailAddress == emailAddress).get()
-		if user:
+		trainer = User.query(User.emailAddress == trainerAddress).get()
+		if trainer:
 			statusCode = 201
-			other = User.query(User.emailAddress == otherAddress).get()
-			if other:
-				if addTrainer == 1:
-					train = Trains(other.userId, user.userId)
-					train.put()
-				else:
-					train = Trains(user.userId, other.userId)
-					train.put()
+			trainee = User.query(User.emailAddress == traineeAddress).get()
+			if trainee:
+				train = Trains(trainer.userId, trainee.userId)
+				train.put()
 				statusCode = 200
 		self.response.write(json.dumps({'statusCode': statusCode}))
 
@@ -176,6 +171,11 @@ class NotificationHandler(webapp2.RequestHandler):
 		notification = Notification(notificationId=notificationId, contents=contents, recurrenceRate=recurrenceRate, senderId=int(senderId), receiverId=int(receiverId))
 		notification.put()
 		self.response.write(json.dumps({'statusCode': statusCode}))
+
+	def delete(self):
+		notificationId = self.request.get('notificationId')
+		notification = Notification.query(Notification.notificationId==notificationId).get()
+		notification.key.delete()
 
 class ExerciseHandler(webapp2.RequestHandler):
 	def get(self):

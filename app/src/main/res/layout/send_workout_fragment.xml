@@ -51,16 +51,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/workoutNameSpinnerSendWorkout"
-        android:layout_below="@+id/createWorkoutHeaderCreateWorkout"
         android:layout_marginTop="41dp"
-        android:layout_toEndOf="@+id/createWorkoutHeaderCreateWorkout"
-        android:spinnerMode="dropdown" />
+        android:spinnerMode="dropdown"
+        android:layout_below="@+id/createWorkoutHeaderCreateWorkout"
+        android:layout_toEndOf="@+id/textView" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Workout Name"
+        android:text="Workout Name:"
         android:id="@+id/textView"
         android:layout_alignTop="@+id/workoutNameSpinnerSendWorkout"
         android:layout_alignParentStart="true" />
@@ -71,7 +71,7 @@
         android:text="Add Recipients"
         android:id="@+id/addRecipientsButtonSendWorkout"
         android:layout_below="@+id/recipientsTextSendWorkout"
-        android:layout_toStartOf="@+id/workoutNameSpinnerSendWorkout" />
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:layout_width="wrap_content"
