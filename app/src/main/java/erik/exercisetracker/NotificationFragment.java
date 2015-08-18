@@ -64,6 +64,7 @@ public class NotificationFragment extends Fragment {
                             newDate = new Date();
                         }
                         DateFormat formatDate = new SimpleDateFormat("MM/dd/yy");
+                        senderName = senderName.replace('#', ' ');
                         addNotificationToList(newNotification, formatDate.format(newDate), senderName, read, rootView);
                     }
                 } catch (JSONException e) {
@@ -94,7 +95,7 @@ public class NotificationFragment extends Fragment {
     }
 
 
-    private void addNotificationToList(String notification, String date, String sender, Boolean read, View rootView){
+    private void addNotificationToList(final String notification, final String date, final String sender, Boolean read, View rootView){
 
         int marginValue = 50;
 
@@ -115,6 +116,7 @@ public class NotificationFragment extends Fragment {
         //dateParams.setMarginEnd(150);
         relative.addView(dateText, dateParams);
 
+
         //notification init
         TextView notificationText = new TextView(getActivity());
         notificationText.setText(notification);
@@ -125,26 +127,25 @@ public class NotificationFragment extends Fragment {
         relative.addView(notificationText, notificationParams);
         notificationParams.setMarginStart(marginValue);
 
-
-
-
         //listener for clicks on Notification title
         notificationText.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
+                frag = frag.newInstance(notification, date, sender);
+
                 ft.replace(R.id.container, frag);
                 ft.addToBackStack(null);
                 ft.commit();
             }
         });
 
+
         //sender init
         TextView senderText = new TextView(getActivity());
-        sender = sender.replace('#', ' ');
-        sender = "From " + sender;
-        senderText.setText(sender);
+        String senderName = "From " + sender;
+        senderText.setText(senderName);
         senderText.setId(View.generateViewId());
         senderText.setTextAppearance(getActivity(), R.style.notification_text);
         RelativeLayout.LayoutParams senderParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
@@ -159,11 +160,14 @@ public class NotificationFragment extends Fragment {
             public void onClick(View v){
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
+                frag = frag.newInstance(notification, date, sender);
+
                 ft.replace(R.id.container, frag);
                 ft.addToBackStack(null);
                 ft.commit();
             }
         });
+
 
         //read flag init
         TextView readFlagText = new TextView(getActivity());
