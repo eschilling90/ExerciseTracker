@@ -79,7 +79,7 @@ class TrainerHandler(webapp2.RequestHandler):
 		user = User.query(User.emailAddress == emailAddress).get()
 		if user:
 			statusCode = 201
-			if getTrainer == 1:
+			if getTrainer != '':
 				trainers = []
 				for trainerId in Trains.query(Trains.traineeId == user.userId):
 					trainer = User.query(User.userId == trainerId.trainerId).get()
@@ -92,9 +92,10 @@ class TrainerHandler(webapp2.RequestHandler):
 				for traineeId in Trains.query(Trains.trainerId == user.userId):
 					trainee = User.query(User.userId == traineeId.traineeId).get()
 					if trainee:
-						trainee.append(trainee.getViewableInfo())
+						trainees.append(trainee.getViewableInfo())
 						statusCode = 200
 						self.response.write(json.dumps({'statusCode': statusCode, 'trainees': trainees}))
+		self.response.write(json.dumps({'statusCode': statusCode}))
 
 	def post(self):
 		#statusCodes:

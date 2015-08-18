@@ -12,7 +12,7 @@ class User(ndb.Model):
 
 
     def getViewableInfo(self):
-        return {'userId': userId, 'name': name, 'emailAddress': emailAddress}
+        return {'userId': self.userId, 'name': self.name, 'emailAddress': self.emailAddress}
 
     @staticmethod
     def generateId():
