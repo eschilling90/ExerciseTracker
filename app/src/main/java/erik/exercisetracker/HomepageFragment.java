@@ -52,6 +52,7 @@ public class HomepageFragment extends Fragment {
             }
         });
 
+
         Button createExercise = (Button) rootView.findViewById(R.id.createExerciseButtonHomepage);
         createExercise.setOnClickListener(new View.OnClickListener() {
             @Override

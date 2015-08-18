@@ -26,6 +26,7 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -76,6 +77,7 @@ public class NotificationFragment extends Fragment {
             }
         });
 
+
         Button backButton  = (Button) rootView.findViewById(R.id.backButtonNotification);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,6 +125,21 @@ public class NotificationFragment extends Fragment {
         relative.addView(notificationText, notificationParams);
         notificationParams.setMarginStart(marginValue);
 
+
+
+
+        //listener for clicks on Notification title
+        notificationText.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
+                ft.replace(R.id.container, frag);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
         //sender init
         TextView senderText = new TextView(getActivity());
         sender = sender.replace('#', ' ');
@@ -135,6 +152,18 @@ public class NotificationFragment extends Fragment {
         senderParams.addRule(RelativeLayout.ALIGN_LEFT, notificationText.getId());
         senderParams.setMarginStart(marginValue + 20);
         relative.addView(senderText, senderParams);
+
+        //listener for clicks on Sender text
+        senderText.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
+                ft.replace(R.id.container, frag);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
 
         //read flag init
         TextView readFlagText = new TextView(getActivity());
