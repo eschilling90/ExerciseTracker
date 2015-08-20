@@ -19,6 +19,9 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,10 +38,18 @@ public class CreateWorkoutFragment extends Fragment {
         rootView = inflater.inflate(R.layout.create_workout_fragment, container, false);
 
         List<ExerciseContent> exercises = CurrentWorkout.getWorkoutExercises();
-        Iterator<ExerciseContent> iterator = exercises.iterator();
-        while (iterator.hasNext()) {
-            addExerciseToWorkout(iterator.next());
+        for (int j=0; j<exercises.size(); j++) {
+            addExerciseToWorkout(exercises.get(j), j);
         }
+
+        Button createButton = (Button) rootView.findViewById(R.id.createButtonCreateWorkout);
+        createButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         Button addExercise = (Button) rootView.findViewById(R.id.addExercisesButtonCreateWorkout);
         addExercise.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,11 +72,59 @@ public class CreateWorkoutFragment extends Fragment {
                 ft.commit();
             }
         });
+
+        Button addTagButton = (Button) rootView.findViewById(R.id.addTagButtonCreateWorkout);
+        addTagButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                alert.setTitle("New Tag");
+                alert.setMessage("");
+                final EditText input = new EditText(getActivity());
+                alert.setView(input);
+                alert.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        TextView tags = (TextView) rootView.findViewById(R.id.tagsTextCreateWorkout);
+                        String tagsContent = tags.getText().toString();
+                        if (tagsContent.isEmpty()) {
+                            tags.setText(input.getText().toString());
+                        } else {
+                            tags.setText(tagsContent + "," + input.getText().toString());
+                        }
+                    }
+                });
+                alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                alert.show();
+            }
+        });
+        Button removeTagButton = (Button) rootView.findViewById(R.id.removeTagButtonCreateWorkout);
+        removeTagButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView tags = (TextView) rootView.findViewById(R.id.tagsTextCreateWorkout);
+                String tagsContent = tags.getText().toString();
+                if (!tagsContent.isEmpty()) {
+                    int index = tagsContent.lastIndexOf(",");
+                    if (index != -1) {
+                        tags.setText(tagsContent.substring(0, index));
+                    } else {
+                        tags.setText("");
+                    }
+                }
+            }
+        });
+
         return rootView;
     }
 
-    private void addExerciseToWorkout(ExerciseContent exercise) {
-        LinearLayout exerciseTable = (LinearLayout) rootView.findViewById(R.id.tableExercisesCreateWorkout);
+    private void addExerciseToWorkout(final ExerciseContent exercise, final int j) {
+        final LinearLayout exerciseTable = (LinearLayout) rootView.findViewById(R.id.tableExercisesCreateWorkout);
         RelativeLayout relativeOuter = new RelativeLayout(getActivity());
         RelativeLayout.LayoutParams rpO = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.MATCH_PARENT);
         int id = View.generateViewId();
@@ -88,9 +147,10 @@ public class CreateWorkoutFragment extends Fragment {
 
         Button removeButton = new Button(getActivity());
         RelativeLayout.LayoutParams buttonParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
+        removeButton.setText("-");
         removeButton.setId(View.generateViewId());
         buttonParams.addRule(RelativeLayout.ALIGN_TOP, nameText.getId());
-        buttonParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+        buttonParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         relativeInner.addView(removeButton, buttonParams);
 
         EditText sets = new EditText(getActivity());
@@ -101,6 +161,6 @@ public class CreateWorkoutFragment extends Fragment {
 
         relativeOuter.addView(relativeInner, rpI);
 
-        exerciseTable.addView(relativeOuter, 0);
+        exerciseTable.addView(relativeOuter);
     }
 }

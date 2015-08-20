@@ -37,5 +37,6 @@ class Notification(ndb.Model):
 		'contents': contents,
 		'creationDate': self.creationDate.isoformat(),
 		'recurrenceRate': self.recurrenceRate,
-		'senderId': sender.name,
+		'senderId': sender.userId,
+		'senderName': sender.name,
 		'read': self.isRead}

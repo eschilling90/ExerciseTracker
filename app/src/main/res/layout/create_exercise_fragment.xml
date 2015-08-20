@@ -55,32 +55,34 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:id="@+id/exerciseNotesTextCreate_exercise"
-        android:layout_marginTop="46dp"
-        android:hint="Notes on the Exercise"
-        android:layout_below="@+id/exerciseDescriptionTextCreate_exercise"
-        android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/createButtonCreate_exercise" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/multiMediaTextCreate_exercise"
         android:hint="Multimedia Link"
         android:layout_below="@+id/exerciseNameTextCreate_exercise"
         android:layout_alignParentStart="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/tagsTextViewCreateExercise"
-        android:hint="Tags"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:id="@+id/scrollViewLayoutCreateExercise"
         android:layout_below="@+id/exerciseDescriptionTextCreate_exercise"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/addTagButtonCreateExercise" />
+        android:layout_toStartOf="@+id/addTagButtonCreateExercise">
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tagsScrollViewCreateExercise" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/tagsTextViewCreateExercise"
+                android:hint="Tags"/>
+        </ScrollView>
+    </LinearLayout>
+
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -99,4 +101,22 @@
         android:id="@+id/removeTagButtonCreateExercise"
         android:layout_below="@+id/exerciseDescriptionTextCreate_exercise"
         android:layout_alignParentEnd="true" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:id="@+id/scrollView2"
+        android:layout_below="@+id/scrollViewLayoutCreateExercise"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/createButtonCreate_exercise"
+        android:layout_above="@+id/backButtonCreate_exercise">
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:inputType="textMultiLine"
+            android:ems="10"
+            android:id="@+id/exerciseNotesTextCreate_exercise"
+            android:hint="Notes on the Exercise" />
+    </ScrollView>
 </RelativeLayout>

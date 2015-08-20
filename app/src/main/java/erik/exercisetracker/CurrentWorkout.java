@@ -15,4 +15,8 @@ public class CurrentWorkout {
     public static List<ExerciseContent> getWorkoutExercises() {
         return exercises;
     }
+
+    public static void removeFromWorkout(int j) {
+        exercises.remove(j);
+    }
 }
