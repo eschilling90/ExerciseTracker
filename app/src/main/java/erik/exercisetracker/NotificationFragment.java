@@ -51,21 +51,23 @@ public class NotificationFragment extends Fragment {
                     JSONObject jsonObject = new JSONObject(new String(response));
                     JSONArray notifications = jsonObject.getJSONArray("notifications");
                     String statusCode = jsonObject.getString("statusCode");
-                    for (int j = 0; j < notifications.length(); j++){
+                    for (int j = 0; j < notifications.length(); j++) {
+                        int notificationId = notifications.getJSONObject(j).getInt("notificationId");
                         String newNotification = notifications.getJSONObject(j).getString("title");
-                        String senderName = notifications.getJSONObject(j).getString("senderId");
+                        String senderName = notifications.getJSONObject(j).getString("senderName");
+                        int senderId = notifications.getJSONObject(j).getInt("senderId");
                         String isoDate = notifications.getJSONObject(j).getString("creationDate");
                         DateFormat df = new SimpleDateFormat("yyy-MM-dd'T'HH:mm:ss");
                         Boolean read = notifications.getJSONObject(j).getBoolean("read");
                         Date newDate = null;
                         try {
                             newDate = df.parse(isoDate);
-                        } catch (ParseException e){
+                        } catch (ParseException e) {
                             newDate = new Date();
                         }
                         DateFormat formatDate = new SimpleDateFormat("MM/dd/yy");
                         senderName = senderName.replace('#', ' ');
-                        addNotificationToList(newNotification, formatDate.format(newDate), senderName, read, rootView);
+                        addNotificationToList(notificationId, newNotification, formatDate.format(newDate), senderName, senderId, read, rootView);
                     }
                 } catch (JSONException e) {
                     setNotificationListErrorMessage("Error loading Notifications (catch)", rootView);
@@ -95,7 +97,7 @@ public class NotificationFragment extends Fragment {
     }
 
 
-    private void addNotificationToList(final String notification, final String date, final String sender, Boolean read, View rootView){
+    private void addNotificationToList(final int notificationId, final String notification, final String date, final String senderName, final int senderId, Boolean read, View rootView){
 
         int marginValue = 50;
 
@@ -133,7 +135,7 @@ public class NotificationFragment extends Fragment {
             public void onClick(View v){
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
-                frag = frag.newInstance(notification, date, sender);
+                frag = frag.newInstance(notificationId, notification, date, senderName, senderId, senderId);
 
                 ft.replace(R.id.container, frag);
                 ft.addToBackStack(null);
@@ -144,8 +146,8 @@ public class NotificationFragment extends Fragment {
 
         //sender init
         TextView senderText = new TextView(getActivity());
-        String senderName = "From " + sender;
-        senderText.setText(senderName);
+        final String fromSenderName = "From " + senderName;
+        senderText.setText(fromSenderName);
         senderText.setId(View.generateViewId());
         senderText.setTextAppearance(getActivity(), R.style.notification_text);
         RelativeLayout.LayoutParams senderParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
@@ -160,7 +162,7 @@ public class NotificationFragment extends Fragment {
             public void onClick(View v){
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
-                frag = frag.newInstance(notification, date, sender);
+                frag = frag.newInstance(notificationId, notification, date, fromSenderName, senderId);
 
                 ft.replace(R.id.container, frag);
                 ft.addToBackStack(null);

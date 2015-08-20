@@ -26,7 +26,8 @@ class Notification(ndb.Model):
 		'title': content["title"],
 		'creationDate': self.creationDate.isoformat(),
 		'recurrenceRate': self.recurrenceRate,
-		'senderId': sender.name,
+		'senderId': sender.userId,
+		'senderName': sender.name,
 		'read': self.isRead}
 
 	def JSONOutputDetail(self):

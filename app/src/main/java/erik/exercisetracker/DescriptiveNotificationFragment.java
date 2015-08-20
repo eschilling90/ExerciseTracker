@@ -10,11 +10,21 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.EditText;
+import android.util.Log;
+import android.widget.Toast;
 
+
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 /**
@@ -22,35 +32,41 @@ import org.w3c.dom.Text;
  */
 public class DescriptiveNotificationFragment extends Fragment {
 
-    public static DescriptiveNotificationFragment newInstance(String notification, String date, String sender){
+    public static DescriptiveNotificationFragment newInstance(int notificationId, String notification, String date, String senderName, int senderId){
         DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
         Bundle details = new Bundle();
+        details.putInt("notificationId", notificationId);
         details.putString("notificationType", notification);
         details.putString("date", date);
-        details.putString("sender", sender);
+        details.putInt("senderId", senderId);
+        details.putString("senderName", senderName);
         frag.setArguments(details);
 
         return frag;
     }
 
-    public static DescriptiveNotificationFragment newInstance(String notification, String date, String sender,int workoutId){
+    public static DescriptiveNotificationFragment newInstance(int notificationId, String notification, String date, String senderName, int senderId, int workoutId){
         DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
         Bundle details = new Bundle();
+        details.putInt("notificationId", notificationId);
         details.putString("notificationType", notification);
         details.putInt("workoutId", workoutId);
         details.putString("date", date);
-        details.putString("sender", sender);
+        details.putInt("senderId", senderId);
+        details.putString("senderName", senderName);
         frag.setArguments(details);
 
         return frag;
     }
 
-    public static DescriptiveNotificationFragment newInstance(String notification, String date, String sender, String recurrenceRate){
+    public static DescriptiveNotificationFragment newInstance(int notificationId, String notification, String date, String senderName, int senderId, String recurrenceRate){
         DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
         Bundle details = new Bundle();
+        details.putInt("notificationId", notificationId);
         details.putString("notificationType", notification);
         details.putString("date", date);
-        details.putString("sender", sender);
+        details.putInt("senderId", senderId);
+        details.putString("senderName", senderName);
         details.putString("recurrenceRate", recurrenceRate);
         frag.setArguments(details);
 
@@ -62,9 +78,11 @@ public class DescriptiveNotificationFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.descriptive_notification_fragment, container, false);
 
         Bundle details = getArguments();
+        final int notificationId = details.getInt("notificationId");
         String notificationType = details.getString("notificationType");
         String date = details.getString("date");
-        String sender = details.getString("sender");
+        String senderName = details.getString("senderName");
+        final int senderId = details.getInt("senderId");
 
         TextView header = (TextView) rootView.findViewById(R.id.notificationTypeHeaderDescritpive_notification) ;
         header.setText(notificationType);
@@ -77,7 +95,7 @@ public class DescriptiveNotificationFragment extends Fragment {
         switch(notificationType) {
 
             case ("Trainee request"):
-                contentText.setText(sender + " sent you a trainee request");
+                contentText.setText(senderName + " wants to be your trainer");
 
                 Button declineButton = new Button(getActivity());
                 declineButton.setId(View.generateViewId());
@@ -88,6 +106,34 @@ public class DescriptiveNotificationFragment extends Fragment {
                 declineButtonParams.topMargin = 100;
                 declineButtonParams.addRule(RelativeLayout.ALIGN_START, 100);
                 declineButton.setLayoutParams(declineButtonParams);
+
+                declineButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        //delete notification
+                        ExerciseTrackerActivity.httpClient.delete(ExerciseTrackerActivity.REQUEST_URL + "notification?notificationId=" + notificationId, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int i, Header[] headers, byte[] response) {
+                                Log.d("debug", "response is:" + new String(response));
+                                UtilityFunctions.showToast("Notification was deleted", getActivity(), rootView);
+                            }
+
+                            @Override
+                            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                                UtilityFunctions.showToast("Notification was NOT deleted", getActivity(), rootView);
+
+
+                            }
+                        });
+
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        NotificationFragment frag = new NotificationFragment();
+                        ft.replace(R.id.container, frag);
+                        ft.addToBackStack(null);
+                        ft.commit();
+                    }
+                });
 
 
                 Button acceptButton = new Button(getActivity());
@@ -101,10 +147,82 @@ public class DescriptiveNotificationFragment extends Fragment {
                 acceptButtonParams.setMarginEnd(100);
                 acceptButton.setLayoutParams(acceptButtonParams);
 
+
+                acceptButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                        //finds trainer's list
+                        //______________________________________email needs to be senders email____________________________________________
+                        ExerciseTrackerActivity.httpClient.get(ExerciseTrackerActivity.REQUEST_URL + "trainer?emailAddress=" + senderId, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int i, Header[] headers, byte[] response) {
+                                Log.d("debug", "response is: " + new String(response));
+                                try {
+                                    JSONObject jsonObject = new JSONObject(new String(response));
+                                    JSONArray trainer = jsonObject.getJSONArray("trainer"); // watch name
+                                    String statusCode = jsonObject.getString("statusCode");
+                                    int trainerId = trainer.getJSONObject(0).getInt("trainerId");
+                                } catch (JSONException e) {
+                                    UtilityFunctions.showToast("Could not find trainer", getActivity(), rootView);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+
+                            }
+                        });
+
+                        //adds user to trainer's trainee list
+                        //______________________________________email needs to be senders email____________________________________________
+                        ExerciseTrackerActivity.httpClient.post(ExerciseTrackerActivity.REQUEST_URL + "notification?emailAddress=" + senderId, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int i, Header[] headers, byte[] response) {
+                                Log.d("debug", "response is: " + new String(response));
+                                UtilityFunctions.showToast("Accepted request", getActivity(), rootView);
+
+                            }
+
+                            @Override
+                            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                                UtilityFunctions.showToast("Could not accept request", getActivity(), rootView);
+
+                            }
+                        });
+
+
+                        //delete notification
+                        ExerciseTrackerActivity.httpClient.delete(ExerciseTrackerActivity.REQUEST_URL + "notification?notificationId=" + notificationId, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int i, Header[] headers, byte[] response) {
+                                Log.d("debug", "response is:" + new String(response));
+                                UtilityFunctions.showToast("Notification was deleted", getActivity(), rootView);
+                            }
+
+                            @Override
+                            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                                UtilityFunctions.showToast("Notification was NOT deleted", getActivity(), rootView);
+
+
+                            }
+                        });
+
+
+
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        NotificationFragment frag = new NotificationFragment();
+                        ft.replace(R.id.container, frag);
+                        ft.addToBackStack(null);
+                        ft.commit();
+                    }
+                });
+
                 break;
 
             case "Workout":
-                contentText.setText(sender + " sent you a workout");
+                contentText.setText(senderName + " sent you a workout");
 
                 Button viewButton = new Button(getActivity());
                 viewButton.setId(View.generateViewId());
@@ -130,7 +248,7 @@ public class DescriptiveNotificationFragment extends Fragment {
                 break;
 
             case "WeightCheckIn":
-                contentText.setText(sender + " wants to check your weight");
+                contentText.setText(senderName + " wants to check your weight");
 
 
                 EditText weightInput = new EditText(getActivity());
@@ -154,7 +272,6 @@ public class DescriptiveNotificationFragment extends Fragment {
                 submitWeightButtonParams.setMarginEnd(100);
                 submitWeightButton.setLayoutParams(submitWeightButtonParams);
 
-
                 break;
 
 
@@ -163,15 +280,11 @@ public class DescriptiveNotificationFragment extends Fragment {
         }
 
 
-
-
-
-
         Button backButton = (Button) rootView.findViewById(R.id.backButtonDescritpive_notification);
-        backButton.setOnClickListener(new View.OnClickListener(){
+        backButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 NotificationFragment frag = new NotificationFragment();
                 ft.replace(R.id.container, frag);
