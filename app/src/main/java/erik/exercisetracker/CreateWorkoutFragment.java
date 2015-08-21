@@ -9,14 +9,10 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -27,7 +23,6 @@ import org.apache.http.entity.StringEntity;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -100,6 +95,16 @@ public class CreateWorkoutFragment extends Fragment {
                             UtilityFunctions.showToast("Failed to create workout", getActivity(), rootView);
                         }
                     });
+                    Bundle workoutInfo = new Bundle();
+                    workoutInfo.putString("newName", ((ExerciseTrackerActivity) getActivity()).currentWorkout.name);
+                    workoutInfo.putString("newDescription", ((ExerciseTrackerActivity) getActivity()).currentWorkout.description);
+                    workoutInfo.putString("newTags", ((ExerciseTrackerActivity) getActivity()).currentWorkout.tags);
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    SendWorkoutFragment frag = new SendWorkoutFragment();
+                    frag.setArguments(workoutInfo);
+                    ft.replace(R.id.container, frag);
+                    ft.addToBackStack(null);
+                    ft.commit();
                 }
             }
         });

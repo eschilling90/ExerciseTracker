@@ -11,5 +11,5 @@ public class NotificationContent {
     String title;
     String shortDesc;
     String longDesc;
-    List<String> contents = new ArrayList<String>();
+    String contents;
 }

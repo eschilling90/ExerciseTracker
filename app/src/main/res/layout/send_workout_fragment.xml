@@ -11,23 +11,55 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
-    <EditText
+    <Button
+        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tagsTextCreateWorkout"
-        android:hint="Tags"
-        android:layout_below="@+id/workoutNameSpinnerSendWorkout"
-        android:layout_alignParentStart="true"
+        android:text="+"
+        android:id="@+id/addTagButtonSendWorkout"
+        android:layout_below="@+id/workoutDescriptionTextSendWorkout"
+        android:layout_toStartOf="@+id/removeTagButtonSendWorkout" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-"
+        android:id="@+id/removeTagButtonSendWorkout"
+        android:layout_below="@+id/workoutDescriptionTextSendWorkout"
         android:layout_alignParentEnd="true" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:id="@+id/scrollViewLayoutSendWorkout"
+        android:layout_below="@+id/workoutDescriptionTextSendWorkout"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/addTagButtonSendWorkout">
+
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tagsScrollViewSendWorkout" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/tagsTextSendWorkout"
+                android:hint="Tags" />
+        </ScrollView>
+    </LinearLayout>
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:ems="10"
-        android:id="@+id/workoutDescriptionTextCreateWorkout"
+        android:id="@+id/workoutDescriptionTextSendWorkout"
         android:hint="Workout Description"
-        android:layout_below="@+id/tagsTextCreateWorkout"
+        android:layout_below="@+id/workoutNameSpinnerSendWorkout"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
 
@@ -81,7 +113,7 @@
         android:id="@+id/recipientsTextSendWorkout"
         android:hint="Recipients"
         android:layout_marginTop="54dp"
-        android:layout_below="@+id/workoutDescriptionTextCreateWorkout"
+        android:layout_below="@+id/workoutDescriptionTextSendWorkout"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
 

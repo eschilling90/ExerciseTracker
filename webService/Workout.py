@@ -14,4 +14,4 @@ class Workout(ndb.Model):
 		'name': self.name,
 		'description': self.description,
 		'tags': self.tags,
-		'exercises': exercises}
+		'exercises': self.exercises}

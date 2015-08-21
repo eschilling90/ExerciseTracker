@@ -303,7 +303,7 @@ class WorkoutHandler(webapp2.RequestHandler):
 	def get(self):
 		statusCode = 201
 		workoutId = self.request.get('workoutId')
-		if workoutId == '':
+		if workoutId != '':
 			workout = Workout.get_by_id(workoutId)
 			if workout:
 				statusCode = 200
@@ -311,6 +311,7 @@ class WorkoutHandler(webapp2.RequestHandler):
 			else:
 				self.response.write(json.dumps({'statusCode': statusCode}))
 		else:
+			statusCode = 200
 			workoutName = self.request.get('workoutNames')
 			workouts = []
 			for workout in Workout.query():

@@ -2,6 +2,7 @@ package erik.exercisetracker;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,14 +26,18 @@ import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.apache.http.Header;
+import org.apache.http.entity.StringEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by eriks_000 on 8/14/2015.
@@ -45,33 +50,6 @@ public class SendWorkoutFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedinstanceState) {
         final View rootView = inflater.inflate(R.layout.send_workout_fragment, container, false);
 
-        if (ExerciseTrackerActivity.workouts == null) {
-            ExerciseTrackerActivity.httpClient.get(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "workout?workoutNames=1", new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int i, Header[] headers, byte[] response) {
-                    Log.d("debug", new String(response));
-                    try {
-                        JSONObject jsonObject = new JSONObject(new String(response));
-                        String statusCode = jsonObject.getString("statusCode");
-                        switch (Integer.parseInt(statusCode)) {
-                            case 200:
-                                JSONArray workoutsArray = jsonObject.getJSONArray("workouts");
-                                Gson gson = new Gson();
-                                ExerciseTrackerActivity.workouts = Arrays.asList(gson.fromJson(workoutsArray.toString(), WorkoutContent[].class));
-                                break;
-                            default:
-                                UtilityFunctions.showToast("Some error occurred, could not retrieve workouts", getActivity(), rootView);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                @Override
-                public void onFailure(int i, Header[] headers, byte[] response, Throwable throwable) {
-                    UtilityFunctions.showToast("Failed request", getActivity(), rootView);
-                }
-            });
-        }
         final Spinner workoutSpinner = (Spinner) rootView.findViewById(R.id.workoutNameSpinnerSendWorkout);
         final List<String> workouts = new ArrayList<>();
         workouts.add(0, "Select Workout");
@@ -86,6 +64,12 @@ public class SendWorkoutFragment extends Fragment{
                     ft.replace(R.id.container, frag);
                     ft.addToBackStack(null);
                     ft.commit();
+                } else if (position > 1) {
+                    WorkoutContent workout = ExerciseTrackerActivity.workouts.get(position-2);
+                    EditText description = (EditText) rootView.findViewById(R.id.workoutDescriptionTextSendWorkout);
+                    TextView tags = (TextView) rootView.findViewById(R.id.tagsTextSendWorkout);
+                    description.setText(workout.description);
+                    tags.setText(workout.tags);
                 }
             }
 
@@ -94,7 +78,47 @@ public class SendWorkoutFragment extends Fragment{
 
             }
         });
+        Bundle args = getArguments();
+        if (args != null) {
+            workouts.add(args.getString("newName"));
+            EditText description = (EditText) rootView.findViewById(R.id.workoutDescriptionTextSendWorkout);
+            TextView tags = (TextView) rootView.findViewById(R.id.tagsTextSendWorkout);
+            description.setText(args.getString("newDescription"));
+            tags.setText(args.getString("newTags"));
+            workoutSpinner.setSelection(workouts.size());
+        }
         workoutSpinner.setAdapter(adapter);
+        if (ExerciseTrackerActivity.workouts == null) {
+            ExerciseTrackerActivity.httpClient.get(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "workout?workoutNames=1", new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int i, Header[] headers, byte[] response) {
+                    Log.d("debug", new String(response));
+                    try {
+                        JSONObject jsonObject = new JSONObject(new String(response));
+                        String statusCode = jsonObject.getString("statusCode");
+                        switch (Integer.parseInt(statusCode)) {
+                            case 200:
+                                JSONArray workoutsArray = jsonObject.getJSONArray("workouts");
+                                Gson gson = new Gson();
+                                ExerciseTrackerActivity.workouts = Arrays.asList(gson.fromJson(workoutsArray.toString(), WorkoutContent[].class));
+                                for (WorkoutContent workout : ExerciseTrackerActivity.workouts) {
+                                    adapter.add(workout.name);
+                                }
+                                adapter.notifyDataSetChanged();
+                                break;
+                            default:
+                                UtilityFunctions.showToast("Some error occurred, could not retrieve workouts", getActivity(), rootView);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                @Override
+                public void onFailure(int i, Header[] headers, byte[] response, Throwable throwable) {
+                    UtilityFunctions.showToast("Failed request", getActivity(), rootView);
+                }
+            });
+        }
 
         ExerciseTrackerActivity.httpClient.get(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "trainer?emailAddress=" + ExerciseTrackerActivity.email, new AsyncHttpResponseHandler() {
             @Override
@@ -108,6 +132,9 @@ public class SendWorkoutFragment extends Fragment{
                             JSONArray traineesArray = jsonObject.getJSONArray("trainees");
                             Gson gson = new Gson();
                             trainees = Arrays.asList(gson.fromJson(traineesArray.toString(), UserContent[].class));
+                            for (UserContent trainee : trainees) {
+                                trainee.name = trainee.name.replaceAll("#", " ");
+                            }
                             break;
                         case 201:
                             UtilityFunctions.showToast("Invalid email address, could not retrieve trainees", getActivity(), rootView);
@@ -214,6 +241,75 @@ public class SendWorkoutFragment extends Fragment{
                     }
                 });
                 alert.show();
+            }
+        });
+
+        Button sendButton = (Button) rootView.findViewById(R.id.sendButtonSendWorkout);
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = workoutSpinner.getSelectedItemPosition();
+                if (position <= 1) {
+                    UtilityFunctions.showToast("Select a workout to send", getActivity(), rootView);
+                } else {
+                    EditText recipientsText = (EditText) rootView.findViewById(R.id.recipientsTextSendWorkout);
+                    if (recipientsText.getText().toString().isEmpty()) {
+                        UtilityFunctions.showToast("Select at least one recipient", getActivity(), rootView);
+                    } else {
+                        WorkoutContent workout = ExerciseTrackerActivity.workouts.get(position - 2);
+                        long id = workout.workoutId;
+                        EditText descriptionText = (EditText) rootView.findViewById(R.id.workoutDescriptionTextSendWorkout);
+                        TextView tagsText = (TextView) rootView.findViewById(R.id.tagsTextSendWorkout);
+                        String description = descriptionText.getText().toString();
+                        String tags = tagsText.getText().toString();
+                        String[] recipients = recipientsText.getText().toString().split(",");
+                        for (String recipient : recipients) {
+                            Matcher m = Pattern.compile("\\(([^)]+)\\)").matcher(recipient);
+                            String recipientEmail = "";
+                            if (m.find()) {
+                                recipientEmail = m.group(1);
+                            } else {
+                                UtilityFunctions.showToast("Invalid recipient " + recipient + ". Failed to send", getActivity(), rootView);
+                            }
+                            NotificationContent contents = new NotificationContent();
+                            Gson gson = new Gson();
+                            contents.title = "Workout";
+                            contents.contents = "{'name': " + workout.name + ", 'description': " + description + ", 'tags': " + tags + ", 'workoutId': " + workout.workoutId + "}";
+                            String json = gson.toJson(contents);
+                            StringEntity params = null;
+                            try {
+                                params = new StringEntity(json);
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            ExerciseTrackerActivity.httpClient.post(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "notification?senderAddress=" + ExerciseTrackerActivity.email + "&receiverAddress=" + recipientEmail + "&recurrenceRate=0", params, "application/json", new AsyncHttpResponseHandler() {
+                                @Override
+                                public void onSuccess(int i, Header[] headers, byte[] response) {
+                                    Log.d("debug", "response is: " + new String(response));
+                                    try {
+                                        JSONObject jsonResponse = new JSONObject(new String(response));
+                                        int code = jsonResponse.getInt("statusCode");
+                                        if (code == 202) {
+                                            UtilityFunctions.showToast("Invalid email address", getActivity(), rootView);
+                                        } else if (code == 201) {
+                                            UtilityFunctions.showToast("Invalid trainee email address", getActivity(), rootView);
+                                        } else {
+                                            UtilityFunctions.showToast("Submitted notification to user", getActivity(), rootView);
+                                        }
+                                    } catch (JSONException e) {
+                                        UtilityFunctions.showToast("Failed request", getActivity(), rootView);
+                                        Log.d("debug", new String(response));
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(int i, Header[] headers, byte[] response, Throwable throwable) {
+                                    UtilityFunctions.showToast("Failed request", getActivity(), rootView);
+                                }
+                            });
+                        }
+                    }
+                }
             }
         });
 
