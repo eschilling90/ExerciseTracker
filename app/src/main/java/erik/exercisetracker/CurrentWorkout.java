@@ -7,16 +7,40 @@ import java.util.List;
  * Created by eriks_000 on 8/18/2015.
  */
 public class CurrentWorkout {
-    public static List<ExerciseContent> exercises = new ArrayList<>();
-    public static void addToWorkout(ExerciseContent exerciseContent) {
-        exercises.add(exerciseContent);
+    String name;
+    String description;
+    String tags;
+    List<Exercise> exercises = new ArrayList<>();
+
+    public void addToWorkout(ExerciseContent exerciseContent) {
+        addToWorkout(exerciseContent, "");
     }
 
-    public static List<ExerciseContent> getWorkoutExercises() {
-        return exercises;
+    public void addToWorkout(ExerciseContent exerciseContent, String sets) {
+        Exercise exercise = new Exercise();
+        exercise.exercise = exerciseContent;
+        exercise.sets = sets;
+        exercises.add(exercise);
     }
 
-    public static void removeFromWorkout(int j) {
+    public List<ExerciseContent> getWorkoutExercises() {
+        List<ExerciseContent> exerciseContents = new ArrayList<>();
+        for (Exercise exercise : exercises) {
+            exerciseContents.add(exercise.exercise);
+        }
+        return exerciseContents;
+    }
+
+    public void removeFromWorkout(int j) {
         exercises.remove(j);
+    }
+
+    public ExerciseContent getExercise(int j) {
+        return exercises.get(j).exercise;
+    }
+
+    private class Exercise {
+        ExerciseContent exercise;
+        String sets;
     }
 }

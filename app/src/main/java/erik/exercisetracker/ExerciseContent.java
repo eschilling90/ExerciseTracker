@@ -7,7 +7,7 @@ import java.util.List;
  * Created by eriks_000 on 8/14/2015.
  */
 public class ExerciseContent {
-    int exerciseId;
+    long exerciseId;
     String name;
     int rating;
     String notes;

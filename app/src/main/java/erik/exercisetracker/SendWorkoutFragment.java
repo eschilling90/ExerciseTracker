@@ -45,6 +45,33 @@ public class SendWorkoutFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedinstanceState) {
         final View rootView = inflater.inflate(R.layout.send_workout_fragment, container, false);
 
+        if (ExerciseTrackerActivity.workouts == null) {
+            ExerciseTrackerActivity.httpClient.get(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "workout?workoutNames=1", new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int i, Header[] headers, byte[] response) {
+                    Log.d("debug", new String(response));
+                    try {
+                        JSONObject jsonObject = new JSONObject(new String(response));
+                        String statusCode = jsonObject.getString("statusCode");
+                        switch (Integer.parseInt(statusCode)) {
+                            case 200:
+                                JSONArray workoutsArray = jsonObject.getJSONArray("workouts");
+                                Gson gson = new Gson();
+                                ExerciseTrackerActivity.workouts = Arrays.asList(gson.fromJson(workoutsArray.toString(), WorkoutContent[].class));
+                                break;
+                            default:
+                                UtilityFunctions.showToast("Some error occurred, could not retrieve workouts", getActivity(), rootView);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                @Override
+                public void onFailure(int i, Header[] headers, byte[] response, Throwable throwable) {
+                    UtilityFunctions.showToast("Failed request", getActivity(), rootView);
+                }
+            });
+        }
         final Spinner workoutSpinner = (Spinner) rootView.findViewById(R.id.workoutNameSpinnerSendWorkout);
         final List<String> workouts = new ArrayList<>();
         workouts.add(0, "Select Workout");

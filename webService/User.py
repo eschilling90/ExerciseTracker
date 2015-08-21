@@ -5,22 +5,15 @@ from datetime import datetime
 import json
 
 class User(ndb.Model):
-    userId = ndb.IntegerProperty()
     name = ndb.StringProperty()
     permissionFlag = ndb.IntegerProperty()
     emailAddress = ndb.StringProperty()
 
 
     def getViewableInfo(self):
-        return {'userId': self.userId, 'name': self.name, 'emailAddress': self.emailAddress}
-
-    @staticmethod
-    def generateId():
-        maxId = 0
-        for user in User.query():
-            if user.userId > maxId:
-                maxId = user.userId
-        return maxId + 1
+        return {'userId': self.key.id(),
+        'name': self.name,
+        'emailAddress': self.emailAddress}
 
     """Credentials to authenticate a person.
     """

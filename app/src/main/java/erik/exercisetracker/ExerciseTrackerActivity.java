@@ -9,6 +9,8 @@ import android.view.MenuItem;
 
 import com.loopj.android.http.AsyncHttpClient;
 
+import java.util.List;
+
 
 public class ExerciseTrackerActivity extends ActionBarActivity {
 
@@ -16,6 +18,9 @@ public class ExerciseTrackerActivity extends ActionBarActivity {
     public static String REQUEST_URL = "http://exercise-tracker-web-service.appspot.com/";
     public static SharedPreferences pref;
     public static String email;
+    public static List<WorkoutContent> workouts;
+
+    public CurrentWorkout currentWorkout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

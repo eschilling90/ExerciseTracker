@@ -55,12 +55,11 @@ class RegisterHandler(webapp2.RequestHandler):
 		permissions = int(self.request.get('permissions'))
 		if permissions == '':
 			permissions = 1
-		userId = User.generateId()
 		emailCheck = User.query(User.emailAddress == str(emailAddress)).get()
 		if emailCheck:
 			statusCode = 201
 		else:
-			newUser = User(userId = userId, name = name, emailAddress = emailAddress, permissionFlag = permissions)
+			newUser = User(name = name, emailAddress = emailAddress, permissionFlag = permissions)
 		if newUser:
 			newUser.set_dk(password)
 			newUser.put()
@@ -81,16 +80,16 @@ class TrainerHandler(webapp2.RequestHandler):
 			statusCode = 201
 			if getTrainer != '':
 				trainers = []
-				for trainerId in Trains.query(Trains.traineeId == user.userId):
-					trainer = User.query(User.userId == trainerId.trainerId).get()
+				for trainerId in Trains.query(Trains.traineeId == user.key.id()):
+					trainer = User.get_by_id(trainerId.trainerId)
 					if trainer:
 						trainers.append(trainer.getViewableInfo())
 						statusCode = 200
 						self.response.write(json.dumps({'statusCode': statusCode, 'trainers': trainers}))
 			else:
 				trainees = []
-				for traineeId in Trains.query(Trains.trainerId == user.userId):
-					trainee = User.query(User.userId == traineeId.traineeId).get()
+				for traineeId in Trains.query(Trains.trainerId == user.key.id()):
+					trainee = User.get_by_id(traineeId.traineeId)
 					if trainee:
 						trainees.append(trainee.getViewableInfo())
 						statusCode = 200
@@ -112,7 +111,7 @@ class TrainerHandler(webapp2.RequestHandler):
 			statusCode = 201
 			trainee = User.query(User.emailAddress == traineeAddress).get()
 			if trainee:
-				train = Trains(trainer.userId, trainee.userId)
+				train = Trains(trainer.key.id(), trainee.key.id())
 				train.put()
 				statusCode = 200
 		self.response.write(json.dumps({'statusCode': statusCode}))
@@ -199,7 +198,7 @@ class NotificationHandler(webapp2.RequestHandler):
 			.get at the end. This lets you iterate through everything where notification is an actual Notification
 			object and not some weird query thing.
 			'''
-			for notification in Notification.query(Notification.receiverId == user.userId):
+			for notification in Notification.query(Notification.receiverId == user.key.id()):
 				'''
 				I then add each notification information to an array of notifications with append.
 				This is the main format I return lists of stuff in since GSON can pull that information
@@ -222,7 +221,7 @@ class NotificationHandler(webapp2.RequestHandler):
 		notifications = []
 		if user:
 			statusCode = 200
-			notification = Notification.query(Notification.notificationId == notificationId).get()
+			notification = Notification.get_by_id(notificationId)
 			notifications.append(notification.JSONOutputDetail())
 		self.response.write(json.dumpgs({'statusCode': statusCode, 'notifications': notifications}))
 
@@ -234,13 +233,13 @@ class NotificationHandler(webapp2.RequestHandler):
 			senderEmail = self.request.get('senderAddress')
 			sender = User.query(User.emailAddress == senderEmail).get()
 			if sender:
-				senderId = sender.userId
+				senderId = sender.key.id()
 		receiverId = self.request.get('receiverId')
 		if receiverId == '':
 			receiverEmail = self.request.get('receiverAddress')
 			receiver = User.query(User.emailAddress == receiverEmail).get()
 			if receiver:
-				receiverId = receiver.userId
+				receiverId = receiver.key.id()
 		'''
 		A lot of this is a repeat of above. One thing that is different is I look for both receiverId and receiverAddress.
 		This is because I am not sure what the user will send to the API. Basically, I look for receiverId first, if it
@@ -255,12 +254,6 @@ class NotificationHandler(webapp2.RequestHandler):
 		'''
 		contents = json.dumps(json.loads(self.request.body))
 		'''
-		This is how you generate a new Id. Basically, takes the highest current Id and adds 1. If you need to add a 
-		generateId function to any other entity.py file, just copy it from notification and change the appropriate
-		variables.
-		'''
-		notificationId = int(Notification.generateId())
-		'''
 		This is how you create a new entity row. Use the constructor and pass whatever variables you want to it. 
 		There are some variables that are auto filled (like creationDate) these should not be given a value. There
 		are attributes that have a default value, these can be given values but is not required, if a value is not given
@@ -269,7 +262,7 @@ class NotificationHandler(webapp2.RequestHandler):
 		update rows. Call notification.query().get() to get the row, make any changes, and then call .put() to update the table.
 
 		'''
-		notification = Notification(notificationId=notificationId, contents=contents, recurrenceRate=recurrenceRate, senderId=int(senderId), receiverId=int(receiverId))
+		notification = Notification(contents=contents, recurrenceRate=recurrenceRate, senderId=int(senderId), receiverId=int(receiverId))
 		notification.put()
 		self.response.write(json.dumps({'statusCode': statusCode}))
 
@@ -280,7 +273,7 @@ class NotificationHandler(webapp2.RequestHandler):
 		there is no put function either, the constructor above returns a key. So you actually need to call .key.put()
 		'''
 		notificationId = self.request.get('notificationId')
-		notification = Notification.query(Notification.notificationId==notificationId).get()
+		notification = Notification.get_by_id(notificationId)
 		notification.key.delete()
 
 class ExerciseHandler(webapp2.RequestHandler):
@@ -296,14 +289,13 @@ class ExerciseHandler(webapp2.RequestHandler):
 		emailAddress = self.request.get('emailAddress')
 		logging.info(json.loads(self.request.body))
 		exerciseContents = json.loads(self.request.body)
-		exerciseId = Exercise.generateId()
 		name = exerciseContents['name']
 		notes = exerciseContents['notes']
 		multimedia = exerciseContents['multimedia']
 		description = exerciseContents['description']
 		tags = exerciseContents['tags']
 		user = User.query(User.emailAddress==emailAddress).get()
-		exercise = Exercise(exerciseId=exerciseId, name=name, notes=notes, multimedia=multimedia, description=description, tags=tags, createdBy=user.userId)
+		exercise = Exercise(name=name, notes=notes, multimedia=multimedia, description=description, tags=tags, createdBy=user.key.id())
 		exercise.put()
 		self.response.write(json.dumps({'statusCode': statusCode}))
 
@@ -311,12 +303,19 @@ class WorkoutHandler(webapp2.RequestHandler):
 	def get(self):
 		statusCode = 201
 		workoutId = self.request.get('workoutId')
-		workout = Workout.query(Workout.workoutId==workoutId).get()
-		if workout:
-			statusCode = 200
-			self.response.write(json.dumps({'statusCode': statusCode, 'workout': workout.JSONOutput()}))
+		if workoutId == '':
+			workout = Workout.get_by_id(workoutId)
+			if workout:
+				statusCode = 200
+				self.response.write(json.dumps({'statusCode': statusCode, 'workout': workout.JSONOutput()}))
+			else:
+				self.response.write(json.dumps({'statusCode': statusCode}))
 		else:
-			self.response.write(json.dumps({'statusCode': statusCode}))
+			workoutName = self.request.get('workoutNames')
+			workouts = []
+			for workout in Workout.query():
+				workouts.append(workout.JSONOutput())
+			self.response.write(json.dumps({'statusCode': statusCode, 'workouts': workouts}))
 
 	def post(self):
 		statusCode = 202
@@ -325,15 +324,13 @@ class WorkoutHandler(webapp2.RequestHandler):
 		user = User.query(User.emailAddress==emailAddress).get()
 		if user:
 			statusCode = 201
-			createdBy = user.userId
-			workoutId = Workout.generateId()
+			createdBy = user.key.id()
 			name = workoutContents['name']
 			description = workoutContents['description']
 			tags = workoutContents['tags']
 			rating = 5
 			exercises = workoutContents['exercises']
-			workout = Workout(workoutId=workoutId,
-				createdBy=createdBy,
+			workout = Workout(createdBy=createdBy,
 				name=name,
 				description=description,
 				tags=tags,

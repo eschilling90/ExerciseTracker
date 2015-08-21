@@ -22,6 +22,10 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import org.apache.http.Header;
+import org.apache.http.entity.StringEntity;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,16 +41,66 @@ public class CreateWorkoutFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedinstanceState) {
         rootView = inflater.inflate(R.layout.create_workout_fragment, container, false);
 
-        List<ExerciseContent> exercises = CurrentWorkout.getWorkoutExercises();
-        for (int j=0; j<exercises.size(); j++) {
-            addExerciseToWorkout(exercises.get(j), j);
+        if (((ExerciseTrackerActivity)getActivity()).currentWorkout != null) {
+            List<ExerciseContent> exercises = ((ExerciseTrackerActivity) getActivity()).currentWorkout.getWorkoutExercises();
+            for (int j = 0; j < exercises.size(); j++) {
+                addExerciseToWorkout(exercises.get(j), j);
+            }
         }
 
         Button createButton = (Button) rootView.findViewById(R.id.createButtonCreateWorkout);
         createButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EditText workoutName = (EditText) rootView.findViewById(R.id.workoutNameCreateWorkout);
+                if (workoutName.getText().toString().isEmpty()) {
+                    UtilityFunctions.showToast("Need to set a name", getActivity(), rootView);
+                } else {
+                    EditText workoutDescription = (EditText) rootView.findViewById(R.id.workoutDescriptionTextCreateWorkout);
+                    TextView workoutTags = (TextView) rootView.findViewById(R.id.tagsTextCreateWorkout);
 
+                    ((ExerciseTrackerActivity) getActivity()).currentWorkout.name = workoutName.getText().toString();
+                    ((ExerciseTrackerActivity) getActivity()).currentWorkout.description = workoutDescription.getText().toString();
+                    ((ExerciseTrackerActivity) getActivity()).currentWorkout.tags = workoutTags.getText().toString();
+
+                    List<ExerciseContent> tempExercises = new ArrayList<ExerciseContent>();
+                    List<String> tempSets = new ArrayList<String>();
+                    LinearLayout exerciseTable = (LinearLayout) rootView.findViewById(R.id.tableExercisesCreateWorkout);
+                    for (int j = 0; j < exerciseTable.getChildCount(); j++) {
+                        RelativeLayout outer = (RelativeLayout) exerciseTable.getChildAt(j);
+                        RelativeLayout inner = (RelativeLayout) outer.getChildAt(1);
+                        EditText setsText = (EditText) inner.getChildAt(1);
+                        String sets = setsText.getText().toString();
+                        tempSets.add(sets);
+                        ExerciseContent exerciseInfo = ((ExerciseTrackerActivity) getActivity()).currentWorkout.getExercise(j);
+                        tempExercises.add(exerciseInfo);
+                    }
+                    ((ExerciseTrackerActivity) getActivity()).currentWorkout.exercises.clear();
+                    for (int j = 0; j < tempExercises.size(); j++) {
+                        ((ExerciseTrackerActivity) getActivity()).currentWorkout.addToWorkout(tempExercises.get(j), tempSets.get(j));
+                    }
+
+                    Gson gson = new Gson();
+                    String json = gson.toJson(((ExerciseTrackerActivity) getActivity()).currentWorkout);
+                    ((ExerciseTrackerActivity) getActivity()).currentWorkout = new CurrentWorkout();
+                    StringEntity params = null;
+                    try {
+                        params = new StringEntity(json);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    ExerciseTrackerActivity.httpClient.post(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "workout?emailAddress=" + ExerciseTrackerActivity.email, params, "application/json", new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int i, Header[] headers, byte[] response) {
+                            UtilityFunctions.showToast("Created Workout", getActivity(), rootView);
+                        }
+
+                        @Override
+                        public void onFailure(int i, Header[] headers, byte[] response, Throwable throwable) {
+                            UtilityFunctions.showToast("Failed to create workout", getActivity(), rootView);
+                        }
+                    });
+                }
             }
         });
 

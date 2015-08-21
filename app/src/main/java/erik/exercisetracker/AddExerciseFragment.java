@@ -82,7 +82,10 @@ public class AddExerciseFragment extends Fragment {
                     if (((CheckBox) outer.getChildAt(1)).isChecked()) {
                         RelativeLayout inner = (RelativeLayout) outer.getChildAt(0);
                         int id = inner.getId();
-                        CurrentWorkout.addToWorkout(exerciseMap.get(id));
+                        if (((ExerciseTrackerActivity)getActivity()).currentWorkout == null) {
+                            ((ExerciseTrackerActivity)getActivity()).currentWorkout = new CurrentWorkout();
+                        }
+                        ((ExerciseTrackerActivity)getActivity()).currentWorkout.addToWorkout(exerciseMap.get(id));
                     }
                 }
             }
