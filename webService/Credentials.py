@@ -4,7 +4,7 @@ from google.appengine.ext import ndb
 from datetime import datetime
 
 class Credentials(ndb.Model):
-    userID = ndb.IntegerProperty()
+    #took out userID = ndb.IntegerProperty()
     name = ndb.StringProperty()
     permissionFlag = ndb.IntegerProperty()
     emailAddress = ndb.StringProperty()

@@ -147,14 +147,14 @@ class NotificationHandler(webapp2.RequestHandler):
 		the default value. So if you did self.request.get('emailAddress', 'None'), if there was no emailAddress
 		parameter then email would equal None.
 		'''
-		email = str(self.request.get('emailAddress'))
+		recieverEmail = str(self.request.get('emailAddress'))
 		'''
 		SomeEntity.query(SomeEntity.attribute==value) is your way of accessing the database. In this example,
 		we are accessing the User table. In SQL this would be SELECT * FROM USER WHERE User.emailAddress=email.
 		You can put any conditional inside the (), not just ==. Make sure you do User.attribute or else python 
 		comnplains that it can't find the emailAddress variable.
 		'''
-		user = User.query(User.emailAddress == email).get()
+		user = User.query(User.emailAddress == recieverEmail).get()
 		'''
 		Here I try to get the notificationId parameter
 		'''
@@ -167,7 +167,7 @@ class NotificationHandler(webapp2.RequestHandler):
 		notificationId then I know I want a specific notification to return in detailed format.
 		'''
 		if notificationId == '':
-			self.getShort(email, user)
+			self.getShort(recieverEmail, user)
 		else:
 			self.getDetail(notificationId)
 
@@ -176,7 +176,7 @@ class NotificationHandler(webapp2.RequestHandler):
 	You can think of get, post, and delete as functions that can be overridden and getShort and getDetail as just
 	helper functions.
 	'''
-	def getShort(self, email, user):
+	def getShort(self, recieverEmail, user):
 		#statusCodes:
 		#200 ok
 		#201 other error

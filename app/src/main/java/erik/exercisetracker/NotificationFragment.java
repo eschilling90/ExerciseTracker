@@ -43,7 +43,7 @@ public class NotificationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedinstanceState) {
         final View rootView = inflater.inflate(R.layout.notification_fragment, container, false);
 
-        ExerciseTrackerActivity.httpClient.get(ExerciseTrackerActivity.REQUEST_URL + "notification?emailAddress=" + ExerciseTrackerActivity.email, new AsyncHttpResponseHandler() {
+        ExerciseTrackerActivity.httpClient.get(ExerciseTrackerActivity.REQUEST_URL + "notification?recieverEmail=" + ExerciseTrackerActivity.email, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] response) {
                 Log.d("debug", "response is: " + new String(response));
@@ -55,7 +55,7 @@ public class NotificationFragment extends Fragment {
                         int notificationId = notifications.getJSONObject(j).getInt("notificationId");
                         String newNotification = notifications.getJSONObject(j).getString("title");
                         String senderName = notifications.getJSONObject(j).getString("senderName");
-                        int senderId = notifications.getJSONObject(j).getInt("senderId");
+                        String senderEmail = notifications.getJSONObject(j).getString("senderEmail");
                         String isoDate = notifications.getJSONObject(j).getString("creationDate");
                         DateFormat df = new SimpleDateFormat("yyy-MM-dd'T'HH:mm:ss");
                         Boolean read = notifications.getJSONObject(j).getBoolean("read");
@@ -67,7 +67,7 @@ public class NotificationFragment extends Fragment {
                         }
                         DateFormat formatDate = new SimpleDateFormat("MM/dd/yy");
                         senderName = senderName.replace('#', ' ');
-                        addNotificationToList(notificationId, newNotification, formatDate.format(newDate), senderName, senderId, read, rootView);
+                        addNotificationToList(notificationId, newNotification, formatDate.format(newDate), senderName, senderEmail, read, rootView);
                     }
                 } catch (JSONException e) {
                     setNotificationListErrorMessage("Error loading Notifications (catch)", rootView);
@@ -97,7 +97,7 @@ public class NotificationFragment extends Fragment {
     }
 
 
-    private void addNotificationToList(final int notificationId, final String notification, final String date, final String senderName, final int senderId, Boolean read, View rootView){
+    private void addNotificationToList(final int notificationId, final String notification, final String date, final String senderName, final String senderEmail, Boolean read, View rootView){
 
         int marginValue = 50;
 
@@ -135,8 +135,14 @@ public class NotificationFragment extends Fragment {
             public void onClick(View v){
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
-                frag = frag.newInstance(notificationId, notification, date, senderName, senderId, senderId);
+                switch(notification) {
 
+                    case("Trainee request"):
+                        frag = frag.newInstance(notificationId, notification, date, senderName, senderEmail);
+                        break;
+
+
+                }
                 ft.replace(R.id.container, frag);
                 ft.addToBackStack(null);
                 ft.commit();
@@ -162,7 +168,7 @@ public class NotificationFragment extends Fragment {
             public void onClick(View v){
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
-                frag = frag.newInstance(notificationId, notification, date, fromSenderName, senderId);
+                frag = frag.newInstance(notificationId, notification, date, fromSenderName, senderEmail);
 
                 ft.replace(R.id.container, frag);
                 ft.addToBackStack(null);
