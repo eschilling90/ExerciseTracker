@@ -11,7 +11,7 @@ class Notification(ndb.Model):
 	isRead = ndb.BooleanProperty(default=False)
 
 	def JSONOutputShort(self):
-		sender = User.query(User.emailAddress==self.senderEmail)
+		sender = User.query(User.emailAddress==self.senderEmail).get()
 		content = json.loads(str(self.contents))
 		return {'notificationId': self.key.id(),
 		'title': content["title"],
@@ -22,7 +22,7 @@ class Notification(ndb.Model):
 		'read': self.isRead}
 
 	def JSONOutputDetail(self):
-		sender = User.query(User.emailAddress==self.senderEmail)
+		sender = User.query(User.emailAddress==self.senderEmail).get()
 		content = json.loads(self.contents)
 		return {'notificationId': self.key.id(),
 		'contents': contents,
