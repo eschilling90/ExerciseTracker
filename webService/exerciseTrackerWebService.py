@@ -266,9 +266,15 @@ class NotificationHandler(webapp2.RequestHandler):
 		Although, you need to do .key.delete() in order to delete it. There is no delete function for entities. In fact
 		there is no put function either, the constructor above returns a key. So you actually need to call .key.put()
 		'''
+		statusCode = 201
 		notificationId = self.request.get('notificationId')
-		notification = Notification.get_by_id(notificationId)
-		notification.key.delete()
+		logging.info(self.request.get('notificationId'))
+		notification = Notification.get_by_id(int(notificationId))
+		if notification:
+			statusCode = 200
+			notification.key.delete()
+		logging.info(statusCode)
+		self.response.write(json.dumps({'statusCode': statusCode}))
 
 class ExerciseHandler(webapp2.RequestHandler):
 	def get(self):
