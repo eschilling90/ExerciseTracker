@@ -137,10 +137,10 @@ public class SendWorkoutFragment extends Fragment{
                             }
                             break;
                         case 201:
-                            UtilityFunctions.showToast("Invalid email address, could not retrieve trainees", getActivity(), rootView);
+                            UtilityFunctions.showToast("Could not retrieve any trainees", getActivity(), rootView);
                             break;
                         default:
-                            UtilityFunctions.showToast("Some error occurred, could not retrieve trainees", getActivity(), rootView);
+                            UtilityFunctions.showToast("Invalid email address, could not retrieve trainees", getActivity(), rootView);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

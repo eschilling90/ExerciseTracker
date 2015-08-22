@@ -43,7 +43,7 @@ public class NotificationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedinstanceState) {
         final View rootView = inflater.inflate(R.layout.notification_fragment, container, false);
 
-        ExerciseTrackerActivity.httpClient.get(ExerciseTrackerActivity.REQUEST_URL + "notification?recieverEmail=" + ExerciseTrackerActivity.email, new AsyncHttpResponseHandler() {
+        ExerciseTrackerActivity.httpClient.get(ExerciseTrackerActivity.REQUEST_URL + "notification?receiverEmail=" + ExerciseTrackerActivity.email, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] response) {
                 Log.d("debug", "response is: " + new String(response));
