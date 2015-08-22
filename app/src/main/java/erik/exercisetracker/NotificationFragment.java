@@ -69,6 +69,29 @@ public class NotificationFragment extends Fragment {
                         senderName = senderName.replace('#', ' ');
                         addNotificationToList(notificationId, newNotification, formatDate.format(newDate), senderName, senderEmail, read, rootView);
                     }
+                    if(notifications.length() == 0){
+                        int marginValue = 50;
+
+                        LinearLayout notificationTable = (LinearLayout) rootView.findViewById(R.id.tableNotification);
+                        RelativeLayout relative = new RelativeLayout(getActivity());
+                        RelativeLayout.LayoutParams rp = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+                        relative.setClickable(true);
+                        //rp.setMargins(0, 0, 0, 0);
+                        relative.setLayoutParams(rp);
+
+                        //date init
+                        TextView messageText = new TextView(getActivity());
+                        messageText.setText("No notifications");
+                        messageText.setId(View.generateViewId());
+                        messageText.setTextAppearance(getActivity(), R.style.notification_text);
+                        RelativeLayout.LayoutParams messageParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
+                        //messageParams.setMarginStart(20);
+                        //messageParams.setMarginEnd(150);
+                        relative.addView(messageText, messageParams);
+
+                        notificationTable.addView(relative, 0);
+
+                    }
                 } catch (JSONException e) {
                     setNotificationListErrorMessage("Error loading Notifications (catch)", rootView);
                 }
@@ -118,7 +141,6 @@ public class NotificationFragment extends Fragment {
         //dateParams.setMarginEnd(150);
         relative.addView(dateText, dateParams);
 
-
         //notification init
         TextView notificationText = new TextView(getActivity());
         notificationText.setText(notification);
@@ -136,11 +158,9 @@ public class NotificationFragment extends Fragment {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
                 switch(notification) {
-
                     case("Trainee request"):
                         frag = frag.newInstance(notificationId, notification, date, senderName, senderEmail);
                         break;
-
 
                 }
                 ft.replace(R.id.container, frag);
@@ -148,7 +168,6 @@ public class NotificationFragment extends Fragment {
                 ft.commit();
             }
         });
-
 
         //sender init
         TextView senderText = new TextView(getActivity());
@@ -163,9 +182,9 @@ public class NotificationFragment extends Fragment {
         relative.addView(senderText, senderParams);
 
         //listener for clicks on Sender text
-        senderText.setOnClickListener(new View.OnClickListener(){
+        senderText.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
                 frag = frag.newInstance(notificationId, notification, date, fromSenderName, senderEmail);
@@ -175,7 +194,6 @@ public class NotificationFragment extends Fragment {
                 ft.commit();
             }
         });
-
 
         //read flag init
         TextView readFlagText = new TextView(getActivity());
