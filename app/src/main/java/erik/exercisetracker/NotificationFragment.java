@@ -52,7 +52,7 @@ public class NotificationFragment extends Fragment {
                     JSONArray notifications = jsonObject.getJSONArray("notifications");
                     String statusCode = jsonObject.getString("statusCode");
                     for (int j = 0; j < notifications.length(); j++) {
-                        int notificationId = notifications.getJSONObject(j).getInt("notificationId");
+                        long notificationId = notifications.getJSONObject(j).getLong("notificationId");
                         String newNotification = notifications.getJSONObject(j).getString("title");
                         String senderName = notifications.getJSONObject(j).getString("senderName");
                         String senderEmail = notifications.getJSONObject(j).getString("senderEmail");
@@ -120,7 +120,7 @@ public class NotificationFragment extends Fragment {
     }
 
 
-    private void addNotificationToList(final int notificationId, final String notification, final String date, final String senderName, final String senderEmail, Boolean read, View rootView){
+    private void addNotificationToList(final long notificationId, final String notification, final String date, final String senderName, final String senderEmail, Boolean read, View rootView){
 
         int marginValue = 50;
 
