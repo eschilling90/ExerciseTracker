@@ -50,7 +50,7 @@ public class AddTraineeFragment extends Fragment {
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
-                ExerciseTrackerActivity.httpClient.post(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "notification?senderAddress=" + emailAddress + "&receiverAddress=" + otherAddress + "&recurrenceRate=0", params, "application/json", new AsyncHttpResponseHandler() {
+                ExerciseTrackerActivity.httpClient.post(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "notification?senderEmail=" + emailAddress + "&receiverEmail=" + otherAddress + "&recurrenceRate=0", params, "application/json", new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int i, Header[] headers, byte[] response) {
                         Log.d("debug", "response is: " + new String(response));

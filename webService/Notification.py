@@ -6,28 +6,28 @@ class Notification(ndb.Model):
 	contents = ndb.TextProperty()
 	creationDate = ndb.DateTimeProperty(auto_now_add=True)
 	recurrenceRate = ndb.StringProperty()
-	senderId = ndb.IntegerProperty()
-	receiverId = ndb.IntegerProperty()
+	senderEmail = ndb.StringProperty()
+	receiverEmail = ndb.StringProperty()
 	isRead = ndb.BooleanProperty(default=False)
 
 	def JSONOutputShort(self):
-		sender = User.get_by_id(self.senderId)
+		sender = User.query(User.emailAddress==self.senderEmail)
 		content = json.loads(str(self.contents))
 		return {'notificationId': self.key.id(),
 		'title': content["title"],
 		'creationDate': self.creationDate.isoformat(),
 		'recurrenceRate': self.recurrenceRate,
-		'senderId': sender.key.id(),
+		'senderEmail': sender.emailAddress,
 		'senderName': sender.name,
 		'read': self.isRead}
 
 	def JSONOutputDetail(self):
-		sender = User.get_by_id(self.senderId)
+		sender = User.query(User.emailAddress==self.senderEmail)
 		content = json.loads(self.contents)
 		return {'notificationId': self.key.id(),
 		'contents': contents,
 		'creationDate': self.creationDate.isoformat(),
 		'recurrenceRate': self.recurrenceRate,
-		'senderId': sender.key.id(),
+		'senderId': sender.emailAddress,
 		'senderName': sender.name,
 		'read': self.isRead}

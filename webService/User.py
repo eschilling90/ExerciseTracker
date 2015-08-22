@@ -11,8 +11,7 @@ class User(ndb.Model):
 
 
     def getViewableInfo(self):
-        return {'userId': self.key.id(),
-        'name': self.name,
+        return {'name': self.name,
         'emailAddress': self.emailAddress}
 
     """Credentials to authenticate a person.

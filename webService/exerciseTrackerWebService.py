@@ -80,16 +80,16 @@ class TrainerHandler(webapp2.RequestHandler):
 			statusCode = 201
 			if getTrainer != '':
 				trainers = []
-				for trainerId in Trains.query(Trains.traineeId == user.key.id()):
-					trainer = User.get_by_id(trainerId.trainerId)
+				for trainerTuple in Trains.query(Trains.traineeEmail == user.emailAddress):
+					trainer = User.query(User.emailAddress==trainerTuple.trainerEmail)
 					if trainer:
 						trainers.append(trainer.getViewableInfo())
 						statusCode = 200
 						self.response.write(json.dumps({'statusCode': statusCode, 'trainers': trainers}))
 			else:
 				trainees = []
-				for traineeId in Trains.query(Trains.trainerId == user.key.id()):
-					trainee = User.get_by_id(traineeId.traineeId)
+				for traineeTuple in Trains.query(Trains.trainerEmail == user.emailAddress):
+					trainee = User.query(User.emailAddress==traineeTuple.traineeEmail)
 					if trainee:
 						trainees.append(trainee.getViewableInfo())
 						statusCode = 200
@@ -111,7 +111,7 @@ class TrainerHandler(webapp2.RequestHandler):
 			statusCode = 201
 			trainee = User.query(User.emailAddress == traineeAddress).get()
 			if trainee:
-				train = Trains(trainer.key.id(), trainee.key.id())
+				train = Trains(trainerAddress, traineeAddress)
 				train.put()
 				statusCode = 200
 		self.response.write(json.dumps({'statusCode': statusCode}))
@@ -198,7 +198,7 @@ class NotificationHandler(webapp2.RequestHandler):
 			.get at the end. This lets you iterate through everything where notification is an actual Notification
 			object and not some weird query thing.
 			'''
-			for notification in Notification.query(Notification.receiverId == user.key.id()):
+			for notification in Notification.query(Notification.receiverEmail == user.emailAddress):
 				'''
 				I then add each notification information to an array of notifications with append.
 				This is the main format I return lists of stuff in since GSON can pull that information
@@ -228,42 +228,36 @@ class NotificationHandler(webapp2.RequestHandler):
 	def post(self):
 		statusCode = 200
 		recurrenceRate = self.request.get('recurrenceRate')
-		senderId = self.request.get('senderId')
-		if senderId == '':
-			senderEmail = self.request.get('senderAddress')
-			sender = User.query(User.emailAddress == senderEmail).get()
-			if sender:
-				senderId = sender.key.id()
-		receiverId = self.request.get('receiverId')
-		if receiverId == '':
-			receiverEmail = self.request.get('receiverAddress')
+		senderEmail = self.request.get('senderEmail')
+		receiverEmail = self.request.get('receiverEmail')
+		sender = User.query(User.emailAddress == senderEmail).get()
+		if sender:
 			receiver = User.query(User.emailAddress == receiverEmail).get()
 			if receiver:
-				receiverId = receiver.key.id()
-		'''
-		A lot of this is a repeat of above. One thing that is different is I look for both receiverId and receiverAddress.
-		This is because I am not sure what the user will send to the API. Basically, I look for receiverId first, if it
-		does exist I move on, if not, then I look for the receiverAddress, use that to get the user, and then set the Id.
-		It just adds a little bit of flexibility for the user.
+				'''
+				A lot of this is a repeat of above. One thing that is different is I look for both receiverId and receiverAddress.
+				This is because I am not sure what the user will send to the API. Basically, I look for receiverId first, if it
+				does exist I move on, if not, then I look for the receiverAddress, use that to get the user, and then set the Id.
+				It just adds a little bit of flexibility for the user.
 
-		below is an example of using the request body to populate contents. In this we use json.loads. It is the reverse
-		of json.dumps, it takes a string and returns a json object (really just a map with stuff in it). Now that I am
-		looking at it, I am not sure if I need to loads and then dumps. I think it is because self.request.body is not
-		written in actual characters so we need to load and then dump into an actual string object but I haven't tested
-		enough to know either way. But I know this works.
-		'''
-		contents = json.dumps(json.loads(self.request.body))
-		'''
-		This is how you create a new entity row. Use the constructor and pass whatever variables you want to it. 
-		There are some variables that are auto filled (like creationDate) these should not be given a value. There
-		are attributes that have a default value, these can be given values but is not required, if a value is not given
-		it uses the default value. Everything else needs a value or it is null. The constructor returns a key to the newly
-		created object but it has not been added to the table yet. You need to call .put() to add it. This is also how you
-		update rows. Call notification.query().get() to get the row, make any changes, and then call .put() to update the table.
+				below is an example of using the request body to populate contents. In this we use json.loads. It is the reverse
+				of json.dumps, it takes a string and returns a json object (really just a map with stuff in it). Now that I am
+				looking at it, I am not sure if I need to loads and then dumps. I think it is because self.request.body is not
+				written in actual characters so we need to load and then dump into an actual string object but I haven't tested
+				enough to know either way. But I know this works.
+				'''
+				contents = json.dumps(json.loads(self.request.body))
+				'''
+				This is how you create a new entity row. Use the constructor and pass whatever variables you want to it. 
+				There are some variables that are auto filled (like creationDate) these should not be given a value. There
+				are attributes that have a default value, these can be given values but is not required, if a value is not given
+				it uses the default value. Everything else needs a value or it is null. The constructor returns a key to the newly
+				created object but it has not been added to the table yet. You need to call .put() to add it. This is also how you
+				update rows. Call notification.query().get() to get the row, make any changes, and then call .put() to update the table.
 
-		'''
-		notification = Notification(contents=contents, recurrenceRate=recurrenceRate, senderId=int(senderId), receiverId=int(receiverId))
-		notification.put()
+				'''
+				notification = Notification(contents=contents, recurrenceRate=recurrenceRate, senderEmail=senderEmail, receiverEmail=receiverEmail)
+				notification.put()
 		self.response.write(json.dumps({'statusCode': statusCode}))
 
 	def delete(self):
@@ -287,6 +281,7 @@ class ExerciseHandler(webapp2.RequestHandler):
 	def post(self):
 		statusCode = 200
 		emailAddress = self.request.get('emailAddress')
+		logging.info(self.request.body)
 		logging.info(json.loads(self.request.body))
 		exerciseContents = json.loads(self.request.body)
 		name = exerciseContents['name']
@@ -294,8 +289,7 @@ class ExerciseHandler(webapp2.RequestHandler):
 		multimedia = exerciseContents['multimedia']
 		description = exerciseContents['description']
 		tags = exerciseContents['tags']
-		user = User.query(User.emailAddress==emailAddress).get()
-		exercise = Exercise(name=name, notes=notes, multimedia=multimedia, description=description, tags=tags, createdBy=user.key.id())
+		exercise = Exercise(name=name, notes=notes, multimedia=multimedia, description=description, tags=tags, createdBy=emailAddress)
 		exercise.put()
 		self.response.write(json.dumps({'statusCode': statusCode}))
 
@@ -325,7 +319,7 @@ class WorkoutHandler(webapp2.RequestHandler):
 		user = User.query(User.emailAddress==emailAddress).get()
 		if user:
 			statusCode = 201
-			createdBy = user.key.id()
+			createdBy = emailAddress
 			name = workoutContents['name']
 			description = workoutContents['description']
 			tags = workoutContents['tags']

@@ -15,7 +15,7 @@ import java.util.List;
 public class ExerciseTrackerActivity extends ActionBarActivity {
 
     public static AsyncHttpClient httpClient = new AsyncHttpClient();
-    public static String REQUEST_URL = "http://exercise-tracker-web-service.appspot.com/";
+    public static String REQUEST_URL = "http://exercise-tracker-webservice.appspot.com/";
     public static SharedPreferences pref;
     public static String email;
     public static List<WorkoutContent> workouts;

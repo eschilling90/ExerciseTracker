@@ -1,5 +1,5 @@
 from google.appengine.ext import ndb
 
 class UserWeight(ndb.Model):
-	userId = ndb.IntegerProperty()
+	userEmail = ndb.StringProperty()
 	weightId = ndb.IntegerProperty()

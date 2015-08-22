@@ -7,7 +7,7 @@ class Exercise(ndb.Model):
 	multimedia = ndb.StringProperty()
 	description = ndb.StringProperty()
 	tags = ndb.StringProperty()
-	createdBy = ndb.IntegerProperty()
+	createdBy = ndb.StringProperty()
 	creationDate = ndb.DateTimeProperty(auto_now_add=True)
 
 	def JSONOutput(self):

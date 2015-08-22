@@ -1,7 +1,7 @@
 from google.appengine.ext import ndb
 
 class Workout(ndb.Model):
-	createdBy = ndb.IntegerProperty()
+	createdBy = ndb.StringProperty()
 	name = ndb.StringProperty()
 	description = ndb.StringProperty()
 	rating = ndb.IntegerProperty()
