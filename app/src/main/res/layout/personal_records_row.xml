@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/nameTextPersonalRecordsRow"
+        android:inputType="textPersonName"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_toStartOf="@+id/weightTextPersonalRecordsRow"
+        android:layout_weight="7.99" />
+
+    <EditText
+        android:layout_width="67dp"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:id="@+id/weightTextPersonalRecordsRow"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/removeButtonPersonalRecordsRow"
+        android:layout_weight="1.14" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/removeButtonPersonalRecordsRow"
+        android:background="@android:drawable/ic_input_delete"
+        android:layout_alignBottom="@+id/weightTextPersonalRecordsRow"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp" />
+</LinearLayout>

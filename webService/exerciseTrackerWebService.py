@@ -341,6 +341,32 @@ class WorkoutHandler(webapp2.RequestHandler):
 			statusCode = 200
 		self.response.write(json.dumps({'statusCode': statusCode}))
 
+class PersonalRecordsHandler(webapp2.RequestHandler):
+	def get(self):
+		statusCode = 201
+		email = self.request.get('emailAddress')
+		user = User.query(User.emailAddress==email).get()
+		if user:
+			statusCode = 200
+			records = user.personalRecords
+			if not records:
+				records = ""
+			self.response.write(json.dumps({'statusCode': statusCode, 'records': records}))
+		self.response.write(json.dumps({'statusCode': statusCode}))
+
+	def post(self):
+		statusCode = 201
+		email = self.request.get('emailAddress')
+		user = User.query(User.emailAddress==email).get()
+		if user:
+			statusCode = 200
+			logging.info(self.request.body)
+			user.personalRecords = self.request.body
+			user.put()
+		self.response.write(json.dumps({'statusCode': statusCode}))
+
+
+
 '''
 class WeightHandler(webapp2.RequestHandler):
 	def get(self):
@@ -380,5 +406,6 @@ application = webapp2.WSGIApplication([
 	('/trainer', TrainerHandler),
 	('/notification', NotificationHandler),
 	('/exercise', ExerciseHandler),
-	('/workout', WorkoutHandler)
+	('/workout', WorkoutHandler),
+	('/personalRecords', PersonalRecordsHandler)
 ], debug=True)

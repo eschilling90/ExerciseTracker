@@ -65,6 +65,18 @@ public class HomepageFragment extends Fragment {
             }
         });
 
+        Button personalRecordsButton = (Button) rootView.findViewById(R.id.personalRecordsButtonHomepage);
+        personalRecordsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                PersonalRecordsFragment frag = new PersonalRecordsFragment();
+                ft.replace(R.id.container, frag);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
         return rootView;
     }
 }

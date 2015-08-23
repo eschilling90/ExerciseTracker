@@ -8,6 +8,7 @@ class User(ndb.Model):
     name = ndb.StringProperty()
     permissionFlag = ndb.IntegerProperty()
     emailAddress = ndb.StringProperty()
+    personalRecords = ndb.StringProperty()
 
 
     def getViewableInfo(self):
