@@ -282,7 +282,7 @@ public class SendWorkoutFragment extends Fragment{
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();
                             }
-                            ExerciseTrackerActivity.httpClient.post(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "notification?senderAddress=" + ExerciseTrackerActivity.email + "&receiverAddress=" + recipientEmail + "&recurrenceRate=0", params, "application/json", new AsyncHttpResponseHandler() {
+                            ExerciseTrackerActivity.httpClient.post(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "notification?senderEmail=" + ExerciseTrackerActivity.email + "&receiverEmail=" + recipientEmail + "&recurrenceRate=0", params, "application/json", new AsyncHttpResponseHandler() {
                                 @Override
                                 public void onSuccess(int i, Header[] headers, byte[] response) {
                                     Log.d("debug", "response is: " + new String(response));

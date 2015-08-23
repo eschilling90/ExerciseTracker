@@ -5,7 +5,7 @@ package erik.exercisetracker;
  */
 public class WorkoutContent {
     long workoutId;
-    long createdBy;
+    String createdBy;
     String name;
     String description;
     int rating;

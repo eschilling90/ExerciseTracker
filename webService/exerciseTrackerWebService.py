@@ -81,7 +81,7 @@ class TrainerHandler(webapp2.RequestHandler):
 			if getTrainer != '':
 				trainers = []
 				for trainerTuple in Trains.query(Trains.traineeEmail == user.emailAddress):
-					trainer = User.query(User.emailAddress==trainerTuple.trainerEmail)
+					trainer = User.query(User.emailAddress==trainerTuple.trainerEmail).get()
 					if trainer:
 						trainers.append(trainer.getViewableInfo())
 						statusCode = 200
@@ -89,7 +89,7 @@ class TrainerHandler(webapp2.RequestHandler):
 			else:
 				trainees = []
 				for traineeTuple in Trains.query(Trains.trainerEmail == user.emailAddress):
-					trainee = User.query(User.emailAddress==traineeTuple.traineeEmail)
+					trainee = User.query(User.emailAddress==traineeTuple.traineeEmail).get()
 					if trainee:
 						trainees.append(trainee.getViewableInfo())
 						statusCode = 200
