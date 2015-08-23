@@ -103,15 +103,15 @@ class TrainerHandler(webapp2.RequestHandler):
 		#202 invalid user address
 		#203 other error
 		statusCode = 203
-		trainerAddress = self.request.get('trainerAddress')
-		traineeAddress = self.request.get('traineeAddress')
+		trainerEmail = self.request.get('trainerEmail')
+		traineeEmail = self.request.get('traineeEmail')
 		statusCode = 202
-		trainer = User.query(User.emailAddress == trainerAddress).get()
+		trainer = User.query(User.emailAddress == trainerEmail).get()
 		if trainer:
 			statusCode = 201
-			trainee = User.query(User.emailAddress == traineeAddress).get()
+			trainee = User.query(User.emailAddress == traineeEmail).get()
 			if trainee:
-				train = Trains(trainerAddress, traineeAddress)
+				train = Trains(trainerEmail=trainerEmail, traineeEmail=traineeEmail)
 				train.put()
 				statusCode = 200
 		self.response.write(json.dumps({'statusCode': statusCode}))

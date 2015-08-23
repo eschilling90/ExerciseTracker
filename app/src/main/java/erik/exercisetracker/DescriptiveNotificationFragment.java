@@ -32,10 +32,10 @@ import org.w3c.dom.Text;
  */
 public class DescriptiveNotificationFragment extends Fragment {
 
-    public static DescriptiveNotificationFragment newInstance(int notificationId, String notification, String date, String senderName, String senderEmail){
+    public static DescriptiveNotificationFragment newInstance(long notificationId, String notification, String date, String senderName, String senderEmail){
         DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
         Bundle details = new Bundle();
-        details.putInt("notificationId", notificationId);
+        details.putLong("notificationId", notificationId);
         details.putString("notificationType", notification);
         details.putString("date", date);
         details.putString("senderEmail", senderEmail);
@@ -45,10 +45,10 @@ public class DescriptiveNotificationFragment extends Fragment {
         return frag;
     }
 
-    public static DescriptiveNotificationFragment newInstance(int notificationId, String notification, String date, String senderName, String senderEmail, int workoutId){
+    public static DescriptiveNotificationFragment newInstance(long notificationId, String notification, String date, String senderName, String senderEmail, int workoutId){
         DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
         Bundle details = new Bundle();
-        details.putInt("notificationId", notificationId);
+        details.putLong("notificationId", notificationId);
         details.putString("notificationType", notification);
         details.putInt("workoutId", workoutId);
         details.putString("date", date);
@@ -59,10 +59,10 @@ public class DescriptiveNotificationFragment extends Fragment {
         return frag;
     }
 
-    public static DescriptiveNotificationFragment newInstance(int notificationId, String notification, String date, String senderName, String senderEmail, String recurrenceRate){
+    public static DescriptiveNotificationFragment newInstance(long notificationId, String notification, String date, String senderName, String senderEmail, String recurrenceRate){
         DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
         Bundle details = new Bundle();
-        details.putInt("notificationId", notificationId);
+        details.putLong("notificationId", notificationId);
         details.putString("notificationType", notification);
         details.putString("date", date);
         details.putString("senderEmail", senderEmail);
@@ -78,7 +78,7 @@ public class DescriptiveNotificationFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.descriptive_notification_fragment, container, false);
 
         Bundle details = getArguments();
-        final int notificationId = details.getInt("notificationId");
+        final long notificationId = details.getLong("notificationId");
         String notificationType = details.getString("notificationType");
         String date = details.getString("date");
         String senderName = details.getString("senderName");
@@ -121,7 +121,7 @@ public class DescriptiveNotificationFragment extends Fragment {
 
                             @Override
                             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                                UtilityFunctions.showToast("Notification was NOT deleted", getActivity(), rootView);
+                                //UtilityFunctions.showToast("Notification was NOT deleted", getActivity(), rootView);
 
 
                             }
@@ -152,55 +152,9 @@ public class DescriptiveNotificationFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
 
-/*
-                        //asdf';lkasd'f;lkas';dfk'a;skf'a;sfkd';akdf';asd
-                        ExerciseTrackerActivity.httpClient.get(ExerciseTrackerActivity.REQUEST_URL + "login?user=" + senderId, new AsyncHttpResponseHandler() {
-                            @Override
-                            public void onSuccess(int i, Header[] headers, byte[] response) {
-                                Log.d("debug", "response is: " + new String(response));
-                                try{
-                                    JSONObject jsonResponse = new JSONObject(new String(response));
-                                    JSONArray trainer = jsonResponse.getJSONArray("user");
-                                    String statusCode = jsonResponse.getString("statusCode");
-                                    String senderAddress =
-
-                                }catch(JSONException e){
-                                    UtilityFunctions.showToast("Could not find trainer", getActivity(), rootView);
-
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-
-                            }
-                        });
-
-                        //finds trainer's list
-                        //______________________________________email needs to be senders email____________________________________________
-                        ExerciseTrackerActivity.httpClient.get(ExerciseTrackerActivity.REQUEST_URL + "trainer?emailAddress=" + senderEmail, new AsyncHttpResponseHandler() {
-                            @Override
-                            public void onSuccess(int i, Header[] headers, byte[] response) {
-                                Log.d("debug", "response is: " + new String(response));
-                                try {
-                                    JSONObject jsonObject = new JSONObject(new String(response));
-                                    JSONArray trainer = jsonObject.getJSONArray("trainer"); // watch name
-                                    String statusCode = jsonObject.getString("statusCode");
-                                    int trainerId = trainer.getJSONObject(0).getInt("trainerId");
-                                } catch (JSONException e) {
-                                    UtilityFunctions.showToast("Could not find trainer", getActivity(), rootView);
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-
-                            }
-                        });
-*/
                         //adds user to trainer's trainee list
                         //______________________________________email needs to be senders email____________________________________________
-                        ExerciseTrackerActivity.httpClient.post(ExerciseTrackerActivity.REQUEST_URL + "trainer?trainerId=" + senderEmail + "&traineeId=" + ExerciseTrackerActivity.email, new AsyncHttpResponseHandler() {
+                        ExerciseTrackerActivity.httpClient.post(ExerciseTrackerActivity.REQUEST_URL + "trainer?trainerEmail=" + senderEmail + "&traineeEmail=" + ExerciseTrackerActivity.email, new AsyncHttpResponseHandler() {
                             @Override
                             public void onSuccess(int i, Header[] headers, byte[] response) {
                                 Log.d("debug", "response is: " + new String(response));
