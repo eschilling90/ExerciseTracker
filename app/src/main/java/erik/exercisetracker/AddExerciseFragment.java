@@ -9,11 +9,14 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -24,7 +27,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +42,38 @@ public class AddExerciseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedinstanceState) {
         final View rootView = inflater.inflate(R.layout.add_exercise_fragment, container, false);
+
+        final Spinner tagSpinner = (Spinner) rootView.findViewById(R.id.filterSpinnerAdd_exercise);
+        final List<String> tags = new ArrayList<>();
+        for (String tag : ExerciseTrackerActivity.exerciseTags) {
+            tags.add(tag);
+        }
+        tags.add(0, "No Filter");
+        final ArrayAdapter adapter = new ArrayAdapter(getActivity(), R.layout.support_simple_spinner_dropdown_item, tags);
+        tagSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 1) {
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    CreateWorkoutFragment frag = new CreateWorkoutFragment();
+                    ft.replace(R.id.container, frag);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                } else if (position > 1) {
+                    WorkoutContent workout = ExerciseTrackerActivity.workouts.get(position-2);
+                    EditText description = (EditText) rootView.findViewById(R.id.workoutDescriptionTextSendWorkout);
+                    TextView tags = (TextView) rootView.findViewById(R.id.tagsTextSendWorkout);
+                    description.setText(workout.description);
+                    tags.setText(workout.tags);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        tagSpinner.setAdapter(adapter);
 
         ExerciseTrackerActivity.httpClient.get(getActivity(), ExerciseTrackerActivity.REQUEST_URL + "exercise", new AsyncHttpResponseHandler() {
             @Override

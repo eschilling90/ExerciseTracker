@@ -219,9 +219,9 @@ class NotificationHandler(webapp2.RequestHandler):
 		#201 other error
 		statusCode = 201
 		notifications = []
-		if user:
+		notification = Notification.get_by_id(notificationId)
+		if notification:
 			statusCode = 200
-			notification = Notification.get_by_id(notificationId)
 			notifications.append(notification.JSONOutputDetail())
 		self.response.write(json.dumpgs({'statusCode': statusCode, 'notifications': notifications}))
 
@@ -365,7 +365,27 @@ class PersonalRecordsHandler(webapp2.RequestHandler):
 			user.put()
 		self.response.write(json.dumps({'statusCode': statusCode}))
 
-
+class TagHandler(webapp2.RequestHandler):
+	def get(self):
+		statusCode = 200
+		tags = ''
+		for exercise in Exercise.query():
+			eTags = exercise.tags
+			for tag in exercise.tags.split(","):
+				if tag not in tags:
+					if tags == '':
+						tags = tag
+					else:
+						tags = tags + "," + tag
+				if tag == 'None':
+					logging.info(eTags)
+					eTags = eTags.replace('None,','')
+					eTags = eTags.replace(',None','')
+					eTags = eTags.replace('None','')
+					logging.info(eTags)
+					exercise.tags = eTags
+					exercise.put()
+		self.response.write(json.dumps({'statusCode': statusCode, 'tags': tags}))
 
 '''
 class WeightHandler(webapp2.RequestHandler):
@@ -407,5 +427,6 @@ application = webapp2.WSGIApplication([
 	('/notification', NotificationHandler),
 	('/exercise', ExerciseHandler),
 	('/workout', WorkoutHandler),
-	('/personalRecords', PersonalRecordsHandler)
+	('/personalRecords', PersonalRecordsHandler),
+	('/tags', TagHandler)
 ], debug=True)
