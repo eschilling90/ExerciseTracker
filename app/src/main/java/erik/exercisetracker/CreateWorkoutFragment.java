@@ -54,6 +54,9 @@ public class CreateWorkoutFragment extends Fragment {
                     EditText workoutDescription = (EditText) rootView.findViewById(R.id.workoutDescriptionTextCreateWorkout);
                     TextView workoutTags = (TextView) rootView.findViewById(R.id.tagsTextCreateWorkout);
 
+                    if (((ExerciseTrackerActivity) getActivity()).currentWorkout == null) {
+                        ((ExerciseTrackerActivity) getActivity()).currentWorkout = new CurrentWorkout();
+                    }
                     ((ExerciseTrackerActivity) getActivity()).currentWorkout.name = workoutName.getText().toString();
                     ((ExerciseTrackerActivity) getActivity()).currentWorkout.description = workoutDescription.getText().toString();
                     ((ExerciseTrackerActivity) getActivity()).currentWorkout.tags = workoutTags.getText().toString();
@@ -77,7 +80,6 @@ public class CreateWorkoutFragment extends Fragment {
 
                     Gson gson = new Gson();
                     String json = gson.toJson(((ExerciseTrackerActivity) getActivity()).currentWorkout);
-                    ((ExerciseTrackerActivity) getActivity()).currentWorkout = new CurrentWorkout();
                     StringEntity params = null;
                     try {
                         params = new StringEntity(json);
@@ -99,6 +101,7 @@ public class CreateWorkoutFragment extends Fragment {
                     workoutInfo.putString("newName", ((ExerciseTrackerActivity) getActivity()).currentWorkout.name);
                     workoutInfo.putString("newDescription", ((ExerciseTrackerActivity) getActivity()).currentWorkout.description);
                     workoutInfo.putString("newTags", ((ExerciseTrackerActivity) getActivity()).currentWorkout.tags);
+                    ((ExerciseTrackerActivity) getActivity()).currentWorkout = new CurrentWorkout();
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     SendWorkoutFragment frag = new SendWorkoutFragment();
                     frag.setArguments(workoutInfo);

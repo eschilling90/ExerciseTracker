@@ -53,19 +53,6 @@ public class AddExerciseFragment extends Fragment {
         tagSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 1) {
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    CreateWorkoutFragment frag = new CreateWorkoutFragment();
-                    ft.replace(R.id.container, frag);
-                    ft.addToBackStack(null);
-                    ft.commit();
-                } else if (position > 1) {
-                    WorkoutContent workout = ExerciseTrackerActivity.workouts.get(position-2);
-                    EditText description = (EditText) rootView.findViewById(R.id.workoutDescriptionTextSendWorkout);
-                    TextView tags = (TextView) rootView.findViewById(R.id.tagsTextSendWorkout);
-                    description.setText(workout.description);
-                    tags.setText(workout.tags);
-                }
             }
 
             @Override
@@ -94,18 +81,6 @@ public class AddExerciseFragment extends Fragment {
             @Override
             public void onFailure(int i, Header[] headers, byte[] response, Throwable throwable) {
                 UtilityFunctions.showToast("Failed request", getActivity(), rootView);
-            }
-        });
-
-        Button backButton = (Button) rootView.findViewById(R.id.backButtonAdd_exercise);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                HomepageFragment frag = new HomepageFragment();
-                ft.replace(R.id.container, frag);
-                ft.addToBackStack(null);
-                ft.commit();
             }
         });
 
