@@ -21,6 +21,8 @@ public class ExerciseTrackerActivity extends ActionBarActivity {
     public static String email;
     public static List<WorkoutContent> workouts;
     public static List<String> exerciseTags = new ArrayList<String>();
+    public static List<ExerciseContent> exerciseList = new ArrayList<>();
+
 
     public CurrentWorkout currentWorkout;
 
