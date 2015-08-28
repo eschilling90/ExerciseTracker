@@ -18,7 +18,6 @@ from Exercise import Exercise
 from Workout import Workout
 from Trains import Trains
 from Weight import Weight
-from UserWeight import UserWeight
 from WorkoutContents import WorkoutContents
 
 
@@ -387,39 +386,42 @@ class TagHandler(webapp2.RequestHandler):
 					exercise.put()
 		self.response.write(json.dumps({'statusCode': statusCode, 'tags': tags}))
 
-'''
+
 class WeightHandler(webapp2.RequestHandler):
 	def get(self):
-		username = str(self.request.get('username'))
-		dateSent = True
-		try:
-			date = str(self.request.get('date'))
-		except KeyError:
-			dateSent = False
+		statusCode = 200
+		emailAddress = str(self.request.get('emailAddress'))
 		all_weight = []
-		if dateSent:
-			for weight in itWeight.query(itWeight.username == username):
-				all_weight.append(weight)
-			all_weight = sorted(all_weight,key=lambda r: r.date,reverse=True)
-		else:
-			str s = ""
+		for weight in Weight.query(Weight.emailAddress == emailAddress):
+			all_weight.append(weight)
+		all_weight = sorted(all_weight,key=lambda r: r.dateTime,reverse=True)
 		return_list = []
 		for weight in all_weight:
-			return_list.append({'weight': weight.weight, 'date': weight.date})
-		self.response.write(json.dumps(return_list))
+			return_list.append({'weight': float(weight.weight), 'date': str(weight.dateTime)})
+		self.response.write(json.dumps({'statusCode': statusCode, 'weights': return_list}))
 
 	def post(self):
 		statusCode = 202
-		username = str(self.request.get('username'))
-		weight = float(self.request.get('weight'))
-
-		newWeight = itWeight(weight = weight, username = username)
+		emailAddress = str(self.request.get('emailAddress'))
+		content = json.loads(self.request.body)
+		logging.info(content)
+		weight = float(content['weight'])
+		date = ''
+		try:
+			date = str(content['date'])
+		except KeyError:
+			date = ''
+		newWeight = ''
+		if date == '':
+			newWeight = Weight(weight=weight, emailAddress=emailAddress)
+		else:
+			newWeight = Weight(weight=weight, emailAddress=emailAddress, dateTime=datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f"))
 		if newWeight:
 			newWeight.put()
 			statusCode = 200
 
 		self.response.write(json.dumps({'statusCode': statusCode}))
-'''
+
 application = webapp2.WSGIApplication([
     ('/login', LoginHandler),
     ('/register', RegisterHandler),
@@ -428,5 +430,6 @@ application = webapp2.WSGIApplication([
 	('/exercise', ExerciseHandler),
 	('/workout', WorkoutHandler),
 	('/personalRecords', PersonalRecordsHandler),
-	('/tags', TagHandler)
+	('/tags', TagHandler),
+	('/weight', WeightHandler)
 ], debug=True)

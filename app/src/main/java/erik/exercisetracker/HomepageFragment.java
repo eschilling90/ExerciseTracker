@@ -77,6 +77,18 @@ public class HomepageFragment extends Fragment {
             }
         });
 
+        Button weightTrackerButton = (Button) rootView.findViewById(R.id.weightTrackerButtonHomepage);
+        weightTrackerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                WeightTrackerFragment frag = new WeightTrackerFragment();
+                ft.replace(R.id.container, frag);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
         return rootView;
     }
 }
