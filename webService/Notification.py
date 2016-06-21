@@ -25,7 +25,7 @@ class Notification(ndb.Model):
 		sender = User.query(User.emailAddress==self.senderEmail).get()
 		content = json.loads(self.contents)
 		return {'notificationId': self.key.id(),
-		'contents': contents,
+		'contents': content,
 		'creationDate': self.creationDate.isoformat(),
 		'recurrenceRate': self.recurrenceRate,
 		'senderId': sender.emailAddress,

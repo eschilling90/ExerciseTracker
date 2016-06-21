@@ -1,37 +1,34 @@
-package erik.exercisetracker;
+package erik.exercisetracker.uiPackage.Notification;
 
 import android.app.ActionBar;
-import android.app.Notification;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import erik.exercisetracker.ExerciseTrackerActivity;
+import erik.exercisetracker.HomepageFragment;
+import erik.exercisetracker.R;
+import erik.exercisetracker.uiPackage.Notification.DescriptiveNotificationFragment;
 
 
 /**
@@ -59,6 +56,12 @@ public class NotificationFragment extends Fragment {
                         String isoDate = notifications.getJSONObject(j).getString("creationDate");
                         DateFormat df = new SimpleDateFormat("yyy-MM-dd'T'HH:mm:ss");
                         Boolean read = notifications.getJSONObject(j).getBoolean("read");
+                        //long workoutId = 0;
+                        //String workoutName = "";
+                        /*if(newNotification.equals("Workout")){
+                            workoutId = notifications.getJSONObject(j).getLong("workoutId");
+                            workoutName = notifications.getJSONObject(j).getString("name");
+                        }*/
                         Date newDate = null;
                         try {
                             newDate = df.parse(isoDate);
@@ -67,7 +70,7 @@ public class NotificationFragment extends Fragment {
                         }
                         DateFormat formatDate = new SimpleDateFormat("MM/dd/yy");
                         senderName = senderName.replace('#', ' ');
-                        addNotificationToList(notificationId, newNotification, formatDate.format(newDate), senderName, senderEmail, read, rootView);
+                        addNotificationToList(notificationId, newNotification, formatDate.format(newDate), senderName, senderEmail, read, rootView); //workoutId, workoutName,
                     }
                     if(notifications.length() == 0){
                         int marginValue = 50;
@@ -159,6 +162,9 @@ public class NotificationFragment extends Fragment {
                 DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
                 switch(notification) {
                     case("Trainee request"):
+                        frag = frag.newInstance(notificationId, notification, date, senderName, senderEmail);
+                        break;
+                    case("Workout"):
                         frag = frag.newInstance(notificationId, notification, date, senderName, senderEmail);
                         break;
 

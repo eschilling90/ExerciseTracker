@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import erik.exercisetracker.uiPackage.Notification.NotificationFragment;
+
 /**
  * Created by eriks_000 on 8/14/2015.
  */

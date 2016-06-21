@@ -117,22 +117,24 @@ class TrainerHandler(webapp2.RequestHandler):
 
 class NotificationHandler(webapp2.RequestHandler):
 	'''
-	Each class in here is a web handler. I name each one after whatever it happens to be handling. But that is not required
-	and simply by design. You could have one hanlder that only adds stuff to the database and every post request goes to it.
-	But that is annyoing to work with. So a reasonably logical design is to break everything up into entity handlers.
+	Each class in here is a web handler. I name each one after whatever it happens to be handling. But that is not 
+	required and simply by design. You could have one hanlder that only adds stuff to the database and every post
+	request goes to it.	But that is annyoing to work with. So a reasonably logical design is to break everything
+	up into entity handlers.
 
-	There are 3 main request handlers inside of NotificationHandler: get, post, and delete. These names describe what they
-	do pretty well. Get will return requested information. In this case, it returns the notification information for a
-	specified user. Post will save stuff to the database. This could mean either inserting or deleteing.
-	And delete will delete stuff from the database. More information can be found here (https://cloud.google.com/appengine/docs/python/tools/webapp/requesthandlerclass)
-	This site is just a very shallow overview, you are better off following links off of that page/site entirely.
+	There are 3 main request handlers inside of NotificationHandler: get, post, and delete. These names describe
+	 what they do pretty well. Get will return requested information. In this case, it returns the notification
+	 information for a specified user. Post will save stuff to the database. This could mean either inserting
+	 or deleteing. And delete will delete stuff from the database. More information can be found here 
+	 (https://cloud.google.com/appengine/docs/python/tools/webapp/requesthandlerclass)
+	 This site is just a very shallow overview, you are better off following links off of that page/site entirely.
 
-	As far as I can tell, self has two attributes, request and response. Generally, you 'get' from the request attribute
-	and 'write' to the response attribute. More detail in the functions.
+	As far as I can tell, self has two attributes, request and response. Generally, you 'get' from the request
+	attribute and 'write' to the response attribute. More detail in the functions.
 
 	https://cloud.google.com/appengine/docs/python/ndb/
-	That is a good look to look at for NDB Datastore API information. I suggest you read at least the Overview, entities
-	and keys, and properties sections.
+	 That is a good look to look at for NDB Datastore API information. I suggest you read at least the 
+	 Overview, entities and keys, and properties sections.
 	'''
 	def get(self):
 		'''
@@ -160,10 +162,10 @@ class NotificationHandler(webapp2.RequestHandler):
 		notificationId = self.request.get('notificationId')
 		'''
 		I am using this as a flag so I know if I should return all of the notifications in the short format
-		or one specific notification with detailed format. If I don't find a notificationId parameter (notificationId,
-			the python variable, is an empty string since that is the default behavior of .get if it can't find the parameter)
-		then I know I just want to return all of the notifications in short format for the inbox. If I do find the
-		notificationId then I know I want a specific notification to return in detailed format.
+		 or one specific notification with detailed format. If I don't find a notificationId parameter (notificationId,
+		 the python variable, is an empty string since that is the default behavior of .get if it can't find the
+		 parameter)	then I know I just want to return all of the notifications in short format for the inbox. If I
+		 do find the notificationId then I know I want a specific notification to return in detailed format.
 		'''
 		if notificationId == '':
 			self.getShort(receiverEmail, user)
@@ -216,13 +218,18 @@ class NotificationHandler(webapp2.RequestHandler):
 		#statusCodes:
 		#200 ok
 		#201 other error
-		statusCode = 201
+		statusCode = 202
 		notifications = []
-		notification = Notification.get_by_id(notificationId)
+		#USE workout.query to return all workouts and select the one that has the right id
+		# also use debug.log to return inportant information 
+		for notification in Notification.query():
+			logging.debug(notification.JSONOutputDetail())
+		logging.debug(notificationId)
+		notification = Notification.get_by_id(int(notificationId))
 		if notification:
 			statusCode = 200
 			notifications.append(notification.JSONOutputDetail())
-		self.response.write(json.dumpgs({'statusCode': statusCode, 'notifications': notifications}))
+		self.response.write(json.dumps({'statusCode': statusCode, 'notifications': notifications}))
 
 	def post(self):
 		statusCode = 200
@@ -289,7 +296,7 @@ class ExerciseHandler(webapp2.RequestHandler):
 		logging.info(self.request.body)
 		logging.info(json.loads(self.request.body))
 		exerciseContents = json.loads(self.request.body)
-		name = exerciseContents['name']
+		name = exerciseContents["name"]
 		notes = exerciseContents['notes']
 		multimedia = exerciseContents['multimedia']
 		description = exerciseContents['description']
@@ -303,7 +310,7 @@ class WorkoutHandler(webapp2.RequestHandler):
 		statusCode = 201
 		workoutId = self.request.get('workoutId')
 		if workoutId != '':
-			workout = Workout.get_by_id(workoutId)
+			workout = Workout.get_by_id(int(workoutId))
 			if workout:
 				statusCode = 200
 				self.response.write(json.dumps({'statusCode': statusCode, 'workout': workout.JSONOutput()}))
@@ -325,7 +332,7 @@ class WorkoutHandler(webapp2.RequestHandler):
 		if user:
 			statusCode = 201
 			createdBy = emailAddress
-			name = workoutContents['name']
+			name = workoutContents["name"]
 			description = workoutContents['description']
 			tags = workoutContents['tags']
 			rating = 5

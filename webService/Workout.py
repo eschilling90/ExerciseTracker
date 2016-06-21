@@ -11,7 +11,7 @@ class Workout(ndb.Model):
 	def JSONOutput(self):
 		return {'workoutId': self.key.id(),
 		'createdBy': self.createdBy,
-		'name': self.name,
+		"name": self.name,
 		'description': self.description,
 		'tags': self.tags,
 		'exercises': self.exercises}

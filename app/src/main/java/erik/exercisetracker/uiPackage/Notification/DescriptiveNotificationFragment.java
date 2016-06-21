@@ -1,8 +1,7 @@
-package erik.exercisetracker;
+package erik.exercisetracker.uiPackage.Notification;
 
 
 import android.app.ActionBar;
-import android.app.Notification;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -10,13 +9,10 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.util.Log;
-import android.widget.Toast;
 
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -25,7 +21,10 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
+
+import erik.exercisetracker.ExerciseTrackerActivity;
+import erik.exercisetracker.R;
+import erik.exercisetracker.UtilityFunctions;
 
 /**
  * Created by Alex on 8/17/2015.
@@ -45,15 +44,17 @@ public class DescriptiveNotificationFragment extends Fragment {
         return frag;
     }
 
-    public static DescriptiveNotificationFragment newInstance(long notificationId, String notification, String date, String senderName, String senderEmail, int workoutId){
+    public static DescriptiveNotificationFragment newInstance(long notificationId, String notification, String date, String senderName, String senderEmail, long workoutId, String workoutName){
         DescriptiveNotificationFragment frag = new DescriptiveNotificationFragment();
         Bundle details = new Bundle();
         details.putLong("notificationId", notificationId);
         details.putString("notificationType", notification);
-        details.putInt("workoutId", workoutId);
+        details.putLong("workoutId", workoutId);
         details.putString("date", date);
         details.putString("senderEmail", senderEmail);
         details.putString("senderName", senderName);
+        //details.putString("description", description);
+        details.putString("workoutName", workoutName);
         frag.setArguments(details);
 
         return frag;
@@ -79,16 +80,18 @@ public class DescriptiveNotificationFragment extends Fragment {
 
         Bundle details = getArguments();
         final long notificationId = details.getLong("notificationId");
-        String notificationType = details.getString("notificationType");
-        String date = details.getString("date");
-        String senderName = details.getString("senderName");
+        final String notificationType = details.getString("notificationType");
+        final String date = details.getString("date");
+        final String senderName = details.getString("senderName");
         final String senderEmail = details.getString("senderEmail");
+        //final long workoutId = details.getLong("workoutId");
+        //final String workoutName = details.getString("workoutName");
 
         TextView header = (TextView) rootView.findViewById(R.id.notificationTypeHeaderDescritpive_notification) ;
         header.setText(notificationType);
         TextView dateText = (TextView) rootView.findViewById(R.id.dateTextDescriptive_notification);
         dateText.setText("on " + date);
-        TextView contentText = (TextView)rootView.findViewById(R.id.textline1Descriptive_notification);
+        final TextView contentText = (TextView)rootView.findViewById(R.id.textline1Descriptive_notification);
         RelativeLayout relativeLayoutDescriptive = (RelativeLayout) rootView.findViewById(R.id.relativeLayoutDescriptive_notification);
 
 
@@ -121,8 +124,7 @@ public class DescriptiveNotificationFragment extends Fragment {
 
                             @Override
                             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                                //UtilityFunctions.showToast("Notification was NOT deleted", getActivity(), rootView);
-
+                                UtilityFunctions.showToast("Notification was NOT deleted", getActivity(), rootView);
 
                             }
                         });
@@ -134,7 +136,6 @@ public class DescriptiveNotificationFragment extends Fragment {
                         ft.commit();
                     }
                 });
-
 
                 Button acceptButton = new Button(getActivity());
                 acceptButton.setId(View.generateViewId());
@@ -169,7 +170,6 @@ public class DescriptiveNotificationFragment extends Fragment {
                             }
                         });
 
-
                         //delete notification
                         ExerciseTrackerActivity.httpClient.delete(ExerciseTrackerActivity.REQUEST_URL + "notification?notificationId=" + notificationId, new AsyncHttpResponseHandler() {
                             @Override
@@ -182,7 +182,6 @@ public class DescriptiveNotificationFragment extends Fragment {
                             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
                                 UtilityFunctions.showToast("Notification was NOT deleted", getActivity(), rootView);
 
-
                             }
                         });
 
@@ -191,7 +190,7 @@ public class DescriptiveNotificationFragment extends Fragment {
                         FragmentTransaction ft = getFragmentManager().beginTransaction();
                         NotificationFragment frag = new NotificationFragment();
                         ft.replace(R.id.container, frag);
-                        ft.addToBackStack(null);
+                        ft.addToBackStack(null); //_________________________________may want to change for discard and delete
                         ft.commit();
                     }
                 });
@@ -199,18 +198,62 @@ public class DescriptiveNotificationFragment extends Fragment {
                 break;
 
             case "Workout":
-                contentText.setText(senderName + " sent you a workout");
+                ExerciseTrackerActivity.httpClient.get(ExerciseTrackerActivity.REQUEST_URL + "notification?notificationId=" + notificationId, new AsyncHttpResponseHandler() {
+                    //+ "&receiverEmail=" + ExerciseTrackerActivity.email
+                    @Override
+                    public void onSuccess(int i, Header[] headers, byte[] response) {
+                        Log.d("debug", "response is: " + new String(response));
+                        try {
+                            JSONObject jsonObject = new JSONObject(new String(response));
+                            JSONArray notifications = jsonObject.getJSONArray("notifications");
+                            String statusCode = jsonObject.getString("statusCode");
+                            String contentsString = notifications.getJSONObject(0).getString("contents");
+                            JSONObject contents = new JSONObject(contentsString);
+                            String childContentsStringUnformatted = contents.getString("contents");
+                            String childContentsString = childContentsStringUnformatted.replace("\'", "\"");
+                            JSONObject childContents = new JSONObject(childContentsString);//contents.getJSONObject("contents");
+                            final String workoutName = childContents.getString("name");
+                            final long workoutId = childContents.getLong("workoutId");
 
-                Button viewButton = new Button(getActivity());
-                viewButton.setId(View.generateViewId());
-                viewButton.setText("View");
-                RelativeLayout.LayoutParams viewButtonParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
-                relativeLayoutDescriptive.addView(viewButton, viewButtonParams);
-                viewButtonParams.addRule(RelativeLayout.ALIGN_PARENT_END);
-                viewButtonParams.addRule(RelativeLayout.BELOW, contentText.getId());
-                viewButtonParams.topMargin = 100;
-                viewButtonParams.setMarginEnd(100);
-                viewButton.setLayoutParams(viewButtonParams);
+                            RelativeLayout relativeLayoutDescriptive = (RelativeLayout) rootView.findViewById(R.id.relativeLayoutDescriptive_notification);
+                            TextView workoutHeader = (TextView) rootView.findViewById(R.id.notificationTypeHeaderDescritpive_notification);
+                            workoutHeader.setText(workoutName);
+
+                            TextView dateText = (TextView) rootView.findViewById(R.id.dateTextDescriptive_notification);
+                            dateText.setText("from " + senderName + " on " + date);
+                            TextView workoutContent = (TextView)rootView.findViewById(R.id.textline1Descriptive_notification);
+                            workoutHeader.setText(workoutName);
+                            relativeLayoutDescriptive.removeView(workoutContent);
+
+                            getWorkout(workoutId);
+
+
+
+
+
+                        } catch (JSONException e) {
+                            Log.d("debug", "contents not correctly extracted");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                        Log.d("debug", "contents not correctly extracted (failure)");
+
+                    }
+                });
+
+
+                Button discardButton = new Button(getActivity());
+                discardButton.setId(View.generateViewId());
+                discardButton.setText("Discard");
+                RelativeLayout.LayoutParams discardButtonParams = new RelativeLayout.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
+                relativeLayoutDescriptive.addView(discardButton, discardButtonParams);
+                discardButtonParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+                discardButtonParams.addRule(RelativeLayout.BELOW, contentText.getId());
+                discardButtonParams.topMargin = 100;
+                discardButtonParams.setMarginEnd(100);
+                discardButton.setLayoutParams(discardButtonParams);
 
                 Button saveButton = new Button(getActivity());
                 saveButton.setId(View.generateViewId());
@@ -221,6 +264,32 @@ public class DescriptiveNotificationFragment extends Fragment {
                 saveButtonParams.topMargin = 100;
                 saveButtonParams.addRule(RelativeLayout.ALIGN_START, 100);
                 saveButton.setLayoutParams(saveButtonParams);
+
+
+                discardButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //delete notification
+                        ExerciseTrackerActivity.httpClient.delete(ExerciseTrackerActivity.REQUEST_URL + "notification?notificationId=" + notificationId, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int i, Header[] headers, byte[] response) {
+                                Log.d("debug", "response is:" + new String(response));
+                                UtilityFunctions.showToast("Notification was deleted", getActivity(), rootView);
+                            }
+
+                            @Override
+                            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                                UtilityFunctions.showToast("Notification was NOT deleted", getActivity(), rootView);
+                            }
+                        });
+
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        NotificationFragment frag = new NotificationFragment();
+                        ft.replace(R.id.container, frag);
+                        ft.addToBackStack(null);
+                        ft.commit();
+                    }
+                });
 
                 break;
 
@@ -253,6 +322,7 @@ public class DescriptiveNotificationFragment extends Fragment {
 
 
             default:
+                contentText.setText("Invalid Notification Type");
 
         }
 
@@ -271,5 +341,45 @@ public class DescriptiveNotificationFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    private void getWorkout(long workoutId){
+
+        ExerciseTrackerActivity.httpClient.get(ExerciseTrackerActivity.REQUEST_URL + "workout?workoutId=" + workoutId, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, Header[] headers, byte[] response) {
+                Log.d("debug", "response is: " + new String(response));
+                try {
+                    JSONObject jsonObject = new JSONObject(new String(response));
+                    JSONObject workout = jsonObject.getJSONObject("workouts");
+                    String statusCode = jsonObject.getString("statusCode");
+
+
+
+                    //JSON content
+
+
+                    //String contentString = workout.getJSONObject(0).getString("content");
+
+
+                    //TextView content = new TextView(getActivity());
+                    //contentText.setText(contentString);
+
+
+                } catch (JSONException e) {
+                    Log.d("debug", "Error loading workout");
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+
+            }
+        });
+
+
     }
 }
