@@ -15,12 +15,18 @@ import android.widget.EditText;
 import android.util.Log;
 
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.apache.http.Header;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+//import org.json.JSONArray;
+//import org.json.JSONException;
+//import org.json.JSONObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import erik.exercisetracker.ExerciseTrackerActivity;
 import erik.exercisetracker.R;
@@ -204,16 +210,26 @@ public class DescriptiveNotificationFragment extends Fragment {
                     public void onSuccess(int i, Header[] headers, byte[] response) {
                         Log.d("debug", "response is: " + new String(response));
                         try {
-                            JSONObject jsonObject = new JSONObject(new String(response));
-                            JSONArray notifications = jsonObject.getJSONArray("notifications");
-                            String statusCode = jsonObject.getString("statusCode");
-                            String contentsString = notifications.getJSONObject(0).getString("contents");
-                            JSONObject contents = new JSONObject(contentsString);
-                            String childContentsStringUnformatted = contents.getString("contents");
-                            String childContentsString = childContentsStringUnformatted.replace("\'", "\"");
-                            JSONObject childContents = new JSONObject(childContentsString);//contents.getJSONObject("contents");
-                            final String workoutName = childContents.getString("name");
-                            final long workoutId = childContents.getLong("workoutId");
+//                            JsonObject jsonObject = new JsonObject(new String(response));
+                            JsonElement jsonElement = new JsonParser().parse(new String(response));
+                            JsonObject jsonObject = jsonElement.getAsJsonObject();
+//                            JsonArray notifications = jsonObject.get JSONArray("notifications");
+                            JsonArray notifications = jsonObject.getAsJsonArray("notifications");
+//                            String statusCode = jsonObject.getString("statusCode");
+                            String statusCode = jsonObject.get("statusCode").getAsString();
+//                            String contentsString = notifications.getJSONObject(0).getString("contents");
+                            String contentsString = notifications.getAsJsonObject().getAsString();
+//                            JsonObject contents = new JsonObject(contentsString);
+                            JsonObject contents = notifications.get(0).getAsJsonObject();
+//                            String childContentsStringUnformatted = contents.getString("contents");
+//                            String childContentsString = childContentsStringUnformatted.replace("\'", "\"");
+                            String chilContentsString = contents.get("contents").getAsString();
+//                            JsonObject childContents = new JsonObject(childContentsString);//contents.getJSONObject("contents");
+                            JsonObject childContents = contents.getAsJsonObject("contents");
+//                            final String workoutName = childContents.getString("name");
+                            final String workoutName = childContents.get("name").getAsString();
+//                            final long workoutId = childContents.getLong("workoutId");
+                            final long workoutId = childContents.get("workoutId").getAsLong();
 
                             RelativeLayout relativeLayoutDescriptive = (RelativeLayout) rootView.findViewById(R.id.relativeLayoutDescriptive_notification);
                             TextView workoutHeader = (TextView) rootView.findViewById(R.id.notificationTypeHeaderDescritpive_notification);
@@ -231,7 +247,7 @@ public class DescriptiveNotificationFragment extends Fragment {
 
 
 
-                        } catch (JSONException e) {
+                        } catch (JsonParseException e) {
                             Log.d("debug", "contents not correctly extracted");
                         }
                     }
@@ -350,10 +366,13 @@ public class DescriptiveNotificationFragment extends Fragment {
             public void onSuccess(int i, Header[] headers, byte[] response) {
                 Log.d("debug", "response is: " + new String(response));
                 try {
-                    JSONObject jsonObject = new JSONObject(new String(response));
-                    JSONObject workout = jsonObject.getJSONObject("workouts");
-                    String statusCode = jsonObject.getString("statusCode");
-
+//                    JsonObject jsonObject = new JsonObject(new String(response));
+                    JsonElement jsonElement = new JsonParser().parse(new String(response));
+                    JsonObject jsonObject = jsonElement.getAsJsonObject();
+//                    JsonObject workout = jsonObject.getJSONObject("workouts");
+                    JsonObject workout = jsonObject.get("workouts").getAsJsonObject();
+//                    String statusCode = jsonObject.getString("statusCode");
+                    String statusCode = jsonObject.get("statusCode").getAsString();
 
 
                     //JSON content
@@ -366,7 +385,7 @@ public class DescriptiveNotificationFragment extends Fragment {
                     //contentText.setText(contentString);
 
 
-                } catch (JSONException e) {
+                } catch (JsonParseException e) {
                     Log.d("debug", "Error loading workout");
 
                 }
